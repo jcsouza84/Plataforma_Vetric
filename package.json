@@ -1,0 +1,39 @@
+{
+  "name": "vetric-cve-discovery",
+  "version": "1.0.0",
+  "description": "Discovery Tool para monitorar WebSocket do CVE-PRO Intelbras",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "analyze": "ts-node src/analyze-logs.ts",
+    "test-login": "ts-node src/test-login.ts",
+    "login": "ts-node src/login-real.ts",
+    "login-test": "ts-node src/login-test.ts",
+    "evolution:analyze": "ts-node src/analyze-evolution-api.ts",
+    "evolution:details": "ts-node src/detailed-evolution-instances.ts",
+    "evolution:test": "ts-node src/test-evolution-message.ts",
+    "evolution:test-practical": "ts-node src/test-send-practical.ts",
+    "evolution:examples": "ts-node src/examples/evolution-usage-example.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist logs/*.json logs/*.log"
+  },
+  "keywords": ["cve-pro", "intelbras", "websocket", "stomp", "discovery"],
+  "author": "VETRIC",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "@stomp/stompjs": "^7.0.0",
+    "ws": "^8.16.0",
+    "dotenv": "^16.3.1",
+    "chalk": "^4.1.2",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.11.5",
+    "@types/ws": "^8.5.10"
+  }
+}
+
