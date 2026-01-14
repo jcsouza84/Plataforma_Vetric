@@ -1,0 +1,31 @@
+{
+  "chargers": [
+    {
+      "id": "JDBM1900145Z6",
+      "name": "Gran Marine 1",
+      "connectors": [1]
+    },
+    {
+      "id": "JDBM1900101FE",
+      "name": "Gran Marine 2",
+      "connectors": [1]
+    },
+    {
+      "id": "QUXM1200012V",
+      "name": "Gran Marine 3",
+      "connectors": [1]
+    },
+    {
+      "id": "JDBM1200040BB",
+      "name": "Gran Marine 6",
+      "connectors": [1]
+    },
+    {
+      "id": "0000124080002216",
+      "name": "Gran Marine 5",
+      "connectors": [1]
+    }
+  ]
+}
+
+

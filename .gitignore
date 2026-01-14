@@ -1,173 +1,197 @@
-# ═══════════════════════════════════════════════════════════
-# 🔒 VETRIC - GitIgnore
-# Arquivos que NUNCA devem ir para o GitHub
-# ═══════════════════════════════════════════════════════════
+# ===================================
+# VETRIC - CVE Project .gitignore
+# ===================================
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ SEGURANÇA - ARQUIVOS SENSÍVEIS (CRÍTICO!)              │
-# └─────────────────────────────────────────────────────────┘
+# ========== DEPENDENCIES ==========
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# ========== ENVIRONMENT ===========
 .env
 .env.local
-.env.*.local
-.env.production
 .env.development
-*.pem
-*.key
-*.cert
-*.crt
+.env.test
+.env.production
+.env.*.local
+*.env
 
-# Arquivos de sessão e tokens
-session-info.json
-cookies.json
-token.txt
+# ========== BUILD OUTPUT ==========
+dist/
+dist-ssr/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.vercel/
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ NODE.JS                                                  │
-# └─────────────────────────────────────────────────────────┘
-node_modules/
+# ========== LOGS ==================
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
-
-# ┌─────────────────────────────────────────────────────────┐
-# │ LOGS E DADOS TEMPORÁRIOS                                │
-# └─────────────────────────────────────────────────────────┘
-logs/
-*.log
-combined.log
-error.log
-raw-messages/
-
-# PM2
-.pm2/
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# ┌─────────────────────────────────────────────────────────┐
-# │ UPLOADS E ARQUIVOS DE USUÁRIO                           │
-# └─────────────────────────────────────────────────────────┘
-uploads/
-backups/
-*.pdf
-*.xlsx
-*.xls
-*.csv
-relatorios/
-
-# Exceções: Manter exemplos
-!uploads/.gitkeep
-!backups/.gitkeep
-
-# ┌─────────────────────────────────────────────────────────┐
-# │ BANCO DE DADOS                                           │
-# └─────────────────────────────────────────────────────────┘
+# ========== DATABASES =============
 *.sqlite
 *.sqlite3
 *.db
-*.sql
+*.db-journal
+*.db-wal
+*.db-shm
 
-# PostgreSQL
-pgdata/
+# Backups de banco de dados
+backups/*.sql
+backups/*.dump
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ SISTEMA OPERACIONAL                                      │
-# └─────────────────────────────────────────────────────────┘
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# Linux
-*~
-.directory
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# ┌─────────────────────────────────────────────────────────┐
-# │ IDEs E EDITORES                                          │
-# └─────────────────────────────────────────────────────────┘
-# VSCode / Cursor
+# ========== IDE ===================
+# VSCode
 .vscode/
-.cursor/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 *.code-workspace
 
-# JetBrains
+# IntelliJ / WebStorm
 .idea/
 *.iml
 *.iws
 *.ipr
 
-# Vim
-[._]*.s[a-v][a-z]
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ TESTES E COVERAGE                                        │
-# └─────────────────────────────────────────────────────────┘
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+
+# ========== OS SPECIFIC ===========
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+
+# ========== TYPESCRIPT ============
+*.tsbuildinfo
+.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ========== TESTING ===============
 coverage/
 *.lcov
 .nyc_output/
-test-results/
-test-output.log
+.jest/
+__tests__/coverage/
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ CACHE E TEMPORÁRIOS                                      │
-# └─────────────────────────────────────────────────────────┘
-.cache/
-.temp/
-.tmp/
+# ========== TEMP FILES ============
+tmp/
+temp/
 *.tmp
+*.temp
 *.bak
-*.swp
-*.swo
+*.backup
+*.old
+*.orig
 
-# ┌─────────────────────────────────────────────────────────┐
-# │ OUTROS                                                   │
-# └─────────────────────────────────────────────────────────┘
-# Chargers data (arquivo gerado)
-chargers.json
+# ========== UPLOADS ===============
+uploads/relatorios/*
+!uploads/relatorios/.gitkeep
+uploads/temp/*
+!uploads/temp/.gitkeep
 
-# Lock files (manter apenas package-lock.json no repo)
-yarn.lock
-pnpm-lock.yaml
+# ========== PM2 ===================
+.pm2/
+ecosystem.config.js.backup
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# TypeScript
-*.tsbuildinfo
+# ========== SSL/CERTIFICATES ======
+*.pem
+*.key
+*.crt
+*.csr
+*.cer
+*.p12
+*.pfx
 
-# Optional npm cache directory
-.npm
+# ========== MISC ==================
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
+*.map
 
-# Optional eslint cache
-.eslintcache
+# Arquivos de teste temporários
+test-output.log
+test-results/*.json
+!test-results/.gitkeep
 
-# Output of 'npm pack'
-*.tgz
+# Scripts temporários
+teste-*.ts
+comparar-*.ts
+descobrir-*.ts
+diagnosticar-*.ts
+buscar-*.ts
+check-*.ts
 
-# dotenv environment variable files
-.env.test
+# ========== DOCUMENTAÇÃO (OPCIONAL) ==
+# Descomente se não quiser versionar certos docs:
+# *.draft.md
+# RASCUNHO_*.md
+# WIP_*.md
 
-# Archives
-*.zip
-*.tar.gz
-*.rar
+# ========== FRONTEND ESPECÍFICO ===
+# Vite
+.vite-cache/
 
-# ═══════════════════════════════════════════════════════════
-# FIM DO .gitignore
-# ═══════════════════════════════════════════════════════════
+# Next.js (se usar no futuro)
+.next/
+out/
+
+# ========== BACKEND ESPECÍFICO ====
+# Arquivos de configuração sensíveis
+config/credentials.json
+config/secrets.json
+
+# ========== KEEP FILES ============
+# Arquivos .gitkeep são mantidos
+!.gitkeep

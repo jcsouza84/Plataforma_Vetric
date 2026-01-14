@@ -1,0 +1,1312 @@
+{
+  "timestamp": "2026-01-09T03:58:31.051Z",
+  "environment": "test",
+  "baseUrl": "https://cs-test.intelbras-cve-pro.com.br",
+  "summary": {
+    "total": 7,
+    "success": 3,
+    "failed": 4,
+    "successRate": "42.9%"
+  },
+  "results": [
+    {
+      "endpoint": "/api/v1/chargepoints",
+      "method": "GET",
+      "success": true,
+      "timestamp": "2026-01-09T03:58:27.402Z",
+      "statusCode": 200,
+      "data": {
+        "error": null,
+        "chargePointList": [
+          {
+            "chargeBoxPk": 1237,
+            "chargeBoxId": "MOVE_LAB_INTELBRAS01",
+            "endpointAddress": "https://www.intelbras.com",
+            "ocppProtocol": "ocpp1.6J",
+            "uuid": "dd5db20e-b296-4c43-9270-6aec8d931ea2",
+            "chargePointVendor": "movE",
+            "chargePointModel": "M1",
+            "chargePointSerialNumber": "9876543210",
+            "chargeBoxSerialNumber": null,
+            "fwVersion": "1.0",
+            "description": "INTELBRAS01",
+            "lastHeartbeatTimestamp": "2026-01-09 00:58:03",
+            "locationLatitude": -27.62004513,
+            "locationLongitude": -48.64977837,
+            "connectors": [
+              {
+                "connectorPk": 628827,
+                "connectorId": 1,
+                "powerMax": 22000,
+                "connectorUuid": null,
+                "lastStatus": {
+                  "timeStamp": "2026-01-09T03:45:15.989Z",
+                  "errorCode": "NoError",
+                  "erroInfo": "NoError",
+                  "connectorUuid": null,
+                  "status": "Available",
+                  "usage": 57,
+                  "connectorTypePk": null,
+                  "powerMax": null,
+                  "paymentChargeTypeIncome": null,
+                  "moneyPerKilowattIncome": null,
+                  "moneyPerDurationIncome": null,
+                  "moneyPerTransactionIncome": null,
+                  "taxIncome": null,
+                  "idleFeeDefaultAmount": null,
+                  "hasPayment": null,
+                  "dynamicPricingUuid": null,
+                  "idleConnectorFee": null,
+                  "totalDuration": 65798,
+                  "socPercentage": null,
+                  "currentChargingUserName": null,
+                  "moneyPerDurationIncomeHumanReadable": "null por minuto",
+                  "moneyPerKilowattIncomeHumanReadable": "null por kWh",
+                  "moneyIdleFeeDefaultAmountHumanReadable": null,
+                  "moneyPerTransactionIncomeHumanReadable": null,
+                  "taxIncomeHumanReadable": null
+                },
+                "connectorType": "Type 2",
+                "currentType": "alternating_current",
+                "speed": "SLOW",
+                "unusualStatus": null,
+                "dynamicPricingUuid": null,
+                "moneyPerKilowattIncome": 0,
+                "moneyPerDurationIncome": 0,
+                "chargeBoxUuid": "dd5db20e-b296-4c43-9270-6aec8d931ea2"
+              }
+            ],
+            "address": {
+              "addressPk": 5593,
+              "street": "BR-101",
+              "complement": null,
+              "houseNumber": "na",
+              "zipCode": "88104-800",
+              "district": null,
+              "city": "São José",
+              "cityNumber": null,
+              "state": "SC",
+              "country": "BR",
+              "block": null,
+              "apartment": null,
+              "empty": false,
+              "incomplete": true
+            },
+            "usage": 57,
+            "monthConsumption": 32420,
+            "active": true,
+            "isOpen_24Hours": true,
+            "typeOf": "PUBLIC",
+            "origin": "MOVE",
+            "moneyPerKilowattCost": 0.8,
+            "moneyPerDurationCost": 0,
+            "moneyPerTransactionCost": 0,
+            "moneyPerTransactionIncome": 0.1,
+            "moneyPerKilowattIncome": 0.5,
+            "moneyPerDurationIncome": 0,
+            "registrationStatus": null,
+            "showLocation": true,
+            "chargeBoxGroupPk": 2159,
+            "chargeBoxGroupName": "Teste Intelbras",
+            "tenantName": "Intelbras",
+            "openTime": null,
+            "closeTime": null,
+            "owner": null,
+            "master": null,
+            "isHubjectCompatible": false,
+            "reservation": false,
+            "hasPayment": false,
+            "externalId": "INTELBRAS01",
+            "paymentChargeTypeCost": "KWH",
+            "paymentChargeTypeIncome": "KWH",
+            "paymentChargeByIncome": "CHARGE_BOX",
+            "taxIncome": 0,
+            "tenantPk": 19,
+            "tenantDeviceReader": true,
+            "deviceReaderMac": null,
+            "isOcpiCompatible": false,
+            "isMode1And2Only": null,
+            "insertTimestamp": "2023-01-01 00:00:00",
+            "system": "TWO_PHASE",
+            "phase": "AB",
+            "voltage": 220,
+            "chargingRateUnit": "A",
+            "hasSocPercentage": true,
+            "speedCount": {
+              "nrSlowTotal": 1,
+              "nrSlowAvailable": 1,
+              "nrFastTotal": 0,
+              "nrFastAvailable": 0
+            }
+          },
+          {
+            "chargeBoxPk": 1239,
+            "chargeBoxId": "MOVE_LAB_INTELBRAS03",
+            "endpointAddress": "",
+            "ocppProtocol": "ocpp1.6J",
+            "uuid": "574fa679-4ce3-4ff2-98e6-8c205ecee421",
+            "chargePointVendor": "movE",
+            "chargePointModel": "M1",
+            "chargePointSerialNumber": "9876543210",
+            "chargeBoxSerialNumber": null,
+            "fwVersion": "1.0",
+            "description": "INTELBRAS03",
+            "lastHeartbeatTimestamp": "2026-01-09 00:58:01",
+            "locationLatitude": -27.57961,
+            "locationLongitude": -48.62361,
+            "connectors": [
+              {
+                "connectorPk": 628826,
+                "connectorId": 1,
+                "powerMax": 22000,
+                "connectorUuid": null,
+                "lastStatus": {
+                  "timeStamp": "2026-01-09T03:45:22.404Z",
+                  "errorCode": "NoError",
+                  "erroInfo": "NoError",
+                  "connectorUuid": null,
+                  "status": "Available",
+                  "usage": 31,
+                  "connectorTypePk": null,
+                  "powerMax": null,
+                  "paymentChargeTypeIncome": null,
+                  "moneyPerKilowattIncome": null,
+                  "moneyPerDurationIncome": null,
+                  "moneyPerTransactionIncome": null,
+                  "taxIncome": null,
+                  "idleFeeDefaultAmount": null,
+                  "hasPayment": null,
+                  "dynamicPricingUuid": null,
+                  "idleConnectorFee": null,
+                  "totalDuration": 10758,
+                  "socPercentage": null,
+                  "currentChargingUserName": null,
+                  "moneyPerDurationIncomeHumanReadable": "null por minuto",
+                  "moneyPerKilowattIncomeHumanReadable": "null por kWh",
+                  "moneyIdleFeeDefaultAmountHumanReadable": null,
+                  "moneyPerTransactionIncomeHumanReadable": null,
+                  "taxIncomeHumanReadable": null
+                },
+                "connectorType": "Type 2",
+                "currentType": "alternating_current",
+                "speed": "SLOW",
+                "unusualStatus": null,
+                "dynamicPricingUuid": null,
+                "moneyPerKilowattIncome": 0,
+                "moneyPerDurationIncome": 0,
+                "chargeBoxUuid": "574fa679-4ce3-4ff2-98e6-8c205ecee421"
+              }
+            ],
+            "address": {
+              "addressPk": 7945,
+              "street": "do Iano",
+              "complement": null,
+              "houseNumber": "1511",
+              "zipCode": "88110-603",
+              "district": null,
+              "city": "São José",
+              "cityNumber": null,
+              "state": "SC",
+              "country": "BR",
+              "block": null,
+              "apartment": null,
+              "empty": false,
+              "incomplete": true
+            },
+            "usage": 31,
+            "monthConsumption": 13460,
+            "active": true,
+            "isOpen_24Hours": true,
+            "typeOf": "PUBLIC",
+            "origin": "MOVE",
+            "moneyPerKilowattCost": 0,
+            "moneyPerDurationCost": 0,
+            "moneyPerTransactionCost": 0,
+            "moneyPerTransactionIncome": 0,
+            "moneyPerKilowattIncome": 0,
+            "moneyPerDurationIncome": 0,
+            "registrationStatus": null,
+            "showLocation": true,
+            "chargeBoxGroupPk": 2159,
+            "chargeBoxGroupName": "Teste Intelbras",
+            "tenantName": "Intelbras",
+            "openTime": null,
+            "closeTime": null,
+            "owner": null,
+            "master": null,
+            "isHubjectCompatible": false,
+            "reservation": false,
+            "hasPayment": false,
+            "externalId": null,
+            "paymentChargeTypeCost": "KWH",
+            "paymentChargeTypeIncome": "KWH",
+            "paymentChargeByIncome": "CHARGE_BOX",
+            "taxIncome": 0,
+            "tenantPk": 19,
+            "tenantDeviceReader": true,
+            "deviceReaderMac": null,
+            "isOcpiCompatible": false,
+            "isMode1And2Only": null,
+            "insertTimestamp": "2023-01-01 00:00:00",
+            "system": null,
+            "phase": null,
+            "voltage": null,
+            "chargingRateUnit": null,
+            "hasSocPercentage": true,
+            "speedCount": {
+              "nrSlowTotal": 1,
+              "nrSlowAvailable": 1,
+              "nrFastTotal": 0,
+              "nrFastAvailable": 0
+            }
+          },
+          {
+            "chargeBoxPk": 2641,
+            "chargeBoxId": "JDBK4300012WS",
+            "endpointAddress": "",
+            "ocppProtocol": "ocpp1.6J",
+            "uuid": "11f0d6e2-034d-48c0-82d4-bb9d623b00de",
+            "chargePointVendor": "Intelbras",
+            "chargePointModel": "146",
+            "chargePointSerialNumber": "JDBK4300012WS",
+            "chargeBoxSerialNumber": null,
+            "fwVersion": "1.2.657",
+            "description": "SISTEMAQ TESTE",
+            "lastHeartbeatTimestamp": "2023-11-14 13:34:35",
+            "locationLatitude": -27.56886118,
+            "locationLongitude": -48.62248186,
+            "connectors": [
+              {
+                "connectorPk": 1587472,
+                "connectorId": 1,
+                "powerMax": 22,
+                "connectorUuid": null,
+                "lastStatus": {
+                  "timeStamp": "2023-11-13T12:49:50.000Z",
+                  "errorCode": "NoError",
+                  "erroInfo": "NoError",
+                  "connectorUuid": null,
+                  "status": "Unavailable",
+                  "usage": 5,
+                  "connectorTypePk": null,
+                  "powerMax": null,
+                  "paymentChargeTypeIncome": null,
+                  "moneyPerKilowattIncome": null,
+                  "moneyPerDurationIncome": null,
+                  "moneyPerTransactionIncome": null,
+                  "taxIncome": null,
+                  "idleFeeDefaultAmount": null,
+                  "hasPayment": null,
+                  "dynamicPricingUuid": null,
+                  "idleConnectorFee": null,
+                  "totalDuration": 27026590,
+                  "socPercentage": null,
+                  "currentChargingUserName": null,
+                  "moneyPerDurationIncomeHumanReadable": "null por minuto",
+                  "moneyPerKilowattIncomeHumanReadable": "null por kWh",
+                  "moneyIdleFeeDefaultAmountHumanReadable": null,
+                  "moneyPerTransactionIncomeHumanReadable": null,
+                  "taxIncomeHumanReadable": null
+                },
+                "connectorType": "Type 2",
+                "currentType": "alternating_current",
+                "speed": "SLOW",
+                "unusualStatus": null,
+                "dynamicPricingUuid": null,
+                "moneyPerKilowattIncome": 0,
+                "moneyPerDurationIncome": 0,
+                "chargeBoxUuid": "11f0d6e2-034d-48c0-82d4-bb9d623b00de"
+              }
+            ],
+            "address": {
+              "addressPk": 7959,
+              "street": "Valmir de Souza",
+              "complement": null,
+              "houseNumber": "73",
+              "zipCode": "88111-170",
+              "district": null,
+              "city": "São José",
+              "cityNumber": null,
+              "state": "SC",
+              "country": "BR",
+              "block": null,
+              "apartment": null,
+              "empty": false,
+              "incomplete": true
+            },
+            "usage": 5,
+            "monthConsumption": 0,
+            "active": true,
+            "isOpen_24Hours": true,
+            "typeOf": "PUBLIC",
+            "origin": "MOVE",
+            "moneyPerKilowattCost": 0,
+            "moneyPerDurationCost": 0,
+            "moneyPerTransactionCost": 0,
+            "moneyPerTransactionIncome": 0,
+            "moneyPerKilowattIncome": 0,
+            "moneyPerDurationIncome": 0,
+            "registrationStatus": null,
+            "showLocation": true,
+            "chargeBoxGroupPk": null,
+            "chargeBoxGroupName": null,
+            "tenantName": "Intelbras",
+            "openTime": null,
+            "closeTime": null,
+            "owner": null,
+            "master": null,
+            "isHubjectCompatible": false,
+            "reservation": false,
+            "hasPayment": false,
+            "externalId": null,
+            "paymentChargeTypeCost": "KWH",
+            "paymentChargeTypeIncome": "KWH",
+            "paymentChargeByIncome": "CHARGE_BOX",
+            "taxIncome": 0,
+            "tenantPk": 19,
+            "tenantDeviceReader": true,
+            "deviceReaderMac": null,
+            "isOcpiCompatible": false,
+            "isMode1And2Only": null,
+            "insertTimestamp": "2023-01-01 00:00:00",
+            "system": null,
+            "phase": null,
+            "voltage": null,
+            "chargingRateUnit": null,
+            "hasSocPercentage": true,
+            "speedCount": {
+              "nrSlowTotal": 1,
+              "nrSlowAvailable": 0,
+              "nrFastTotal": 0,
+              "nrFastAvailable": 0
+            }
+          },
+          {
+            "chargeBoxPk": 3279,
+            "chargeBoxId": "QUXK43003841B",
+            "endpointAddress": "",
+            "ocppProtocol": "ocpp1.6J",
+            "uuid": "d7198a0f-e3ee-4b6c-a00d-28c6d2754b2c",
+            "chargePointVendor": "Intelbras",
+            "chargePointModel": "133",
+            "chargePointSerialNumber": "QUXK43003841B",
+            "chargeBoxSerialNumber": null,
+            "fwVersion": "1.2.672",
+            "description": "Treinamento Intersat Teste",
+            "lastHeartbeatTimestamp": "2024-08-14 13:17:13",
+            "locationLatitude": -23.97349961,
+            "locationLongitude": -46.29915384,
+            "connectors": [
+              {
+                "connectorPk": 1642759,
+                "connectorId": 1,
+                "powerMax": null,
+                "connectorUuid": null,
+                "lastStatus": {
+                  "timeStamp": "2023-01-13T01:07:50.000Z",
+                  "errorCode": "NoError",
+                  "erroInfo": "NoError",
+                  "connectorUuid": null,
+                  "status": "Unavailable",
+                  "usage": 5,
+                  "connectorTypePk": null,
+                  "powerMax": null,
+                  "paymentChargeTypeIncome": null,
+                  "moneyPerKilowattIncome": null,
+                  "moneyPerDurationIncome": null,
+                  "moneyPerTransactionIncome": null,
+                  "taxIncome": null,
+                  "idleFeeDefaultAmount": null,
+                  "hasPayment": null,
+                  "dynamicPricingUuid": null,
+                  "idleConnectorFee": null,
+                  "totalDuration": 103056,
+                  "socPercentage": null,
+                  "currentChargingUserName": null,
+                  "moneyPerDurationIncomeHumanReadable": "null por minuto",
+                  "moneyPerKilowattIncomeHumanReadable": "null por kWh",
+                  "moneyIdleFeeDefaultAmountHumanReadable": null,
+                  "moneyPerTransactionIncomeHumanReadable": null,
+                  "taxIncomeHumanReadable": null
+                },
+                "connectorType": "Type 2",
+                "currentType": "alternating_current",
+                "speed": "SLOW",
+                "unusualStatus": null,
+                "dynamicPricingUuid": null,
+                "moneyPerKilowattIncome": 0,
+                "moneyPerDurationIncome": 0,
+                "chargeBoxUuid": "d7198a0f-e3ee-4b6c-a00d-28c6d2754b2c"
+              }
+            ],
+            "address": {
+              "addressPk": 7963,
+              "street": "Doutor Bernardo Browne",
+              "complement": null,
+              "houseNumber": "113",
+              "zipCode": "11025-240",
+              "district": null,
+              "city": "Santos",
+              "cityNumber": null,
+              "state": "SP",
+              "country": "BR",
+              "block": null,
+              "apartment": null,
+              "empty": false,
+              "incomplete": true
+            },
+            "usage": 5,
+            "monthConsumption": 0,
+            "active": true,
+            "isOpen_24Hours": true,
+            "typeOf": "PUBLIC",
+            "origin": "MOVE",
+            "moneyPerKilowattCost": 0,
+            "moneyPerDurationCost": 0,
+            "moneyPerTransactionCost": 0,
+            "moneyPerTransactionIncome": 0,
+            "moneyPerKilowattIncome": 0,
+            "moneyPerDurationIncome": 0,
+            "registrationStatus": null,
+            "showLocation": true,
+            "chargeBoxGroupPk": null,
+            "chargeBoxGroupName": null,
+            "tenantName": "Intelbras",
+            "openTime": null,
+            "closeTime": null,
+            "owner": null,
+            "master": null,
+            "isHubjectCompatible": false,
+            "reservation": false,
+            "hasPayment": false,
+            "externalId": null,
+            "paymentChargeTypeCost": "KWH",
+            "paymentChargeTypeIncome": "KWH",
+            "paymentChargeByIncome": "CHARGE_BOX",
+            "taxIncome": 0,
+            "tenantPk": 19,
+            "tenantDeviceReader": true,
+            "deviceReaderMac": null,
+            "isOcpiCompatible": false,
+            "isMode1And2Only": null,
+            "insertTimestamp": "2023-01-01 00:00:00",
+            "system": null,
+            "phase": null,
+            "voltage": null,
+            "chargingRateUnit": null,
+            "hasSocPercentage": true,
+            "speedCount": {
+              "nrSlowTotal": 1,
+              "nrSlowAvailable": 0,
+              "nrFastTotal": 0,
+              "nrFastAvailable": 0
+            }
+          },
+          {
+            "chargeBoxPk": 3763,
+            "chargeBoxId": "SN10052206318603",
+            "endpointAddress": "https://www.intelbras.com",
+            "ocppProtocol": "ocpp1.6J",
+            "uuid": "542cc48c-f681-49da-a5b6-bee6c9e3a3ac",
+            "chargePointVendor": "Intelbras",
+            "chargePointModel": "145",
+            "chargePointSerialNumber": "SN10052206318603",
+            "chargeBoxSerialNumber": null,
+            "fwVersion": "1.2.657",
+            "description": "Teste_Facial_LAB",
+            "lastHeartbeatTimestamp": "2024-07-03 16:52:54",
+            "locationLatitude": -27.6649628,
+            "locationLongitude": -48.710864,
+            "connectors": [
+              {
+                "connectorPk": 3328785,
+                "connectorId": 1,
+                "powerMax": 22000,
+                "connectorUuid": null,
+                "lastStatus": {
+                  "timeStamp": "2024-07-03T19:52:42.000Z",
+                  "errorCode": "NoError",
+                  "erroInfo": "NoError",
+                  "connectorUuid": null,
+                  "status": "Unavailable",
+                  "usage": 50,
+                  "connectorTypePk": null,
+                  "powerMax": null,
+                  "paymentChargeTypeIncome": null,
+                  "moneyPerKilowattIncome": null,
+                  "moneyPerDurationIncome": null,
+                  "moneyPerTransactionIncome": null,
+                  "taxIncome": null,
+                  "idleFeeDefaultAmount": null,
+                  "hasPayment": null,
+                  "dynamicPricingUuid": null,
+                  "idleConnectorFee": null,
+                  "totalDuration": 120881,
+                  "socPercentage": null,
+                  "currentChargingUserName": null,
+                  "moneyPerDurationIncomeHumanReadable": "null por minuto",
+                  "moneyPerKilowattIncomeHumanReadable": "null por kWh",
+                  "moneyIdleFeeDefaultAmountHumanReadable": null,
+                  "moneyPerTransactionIncomeHumanReadable": null,
+                  "taxIncomeHumanReadable": null
+                },
+                "connectorType": "Type 2",
+                "currentType": "alternating_current",
+                "speed": "SLOW",
+                "unusualStatus": null,
+                "dynamicPricingUuid": null,
+                "moneyPerKilowattIncome": 0,
+                "moneyPerDurationIncome": 0,
+                "chargeBoxUuid": "542cc48c-f681-49da-a5b6-bee6c9e3a3ac"
+              }
+            ],
+            "address": {
+              "addressPk": 7616,
+              "street": "Rodrigo Duarte",
+              "complement": null,
+              "houseNumber": "284",
+              "zipCode": "88135-738",
+              "district": null,
+              "city": "Palhoça",
+              "cityNumber": null,
+              "state": "SC",
+              "country": "BR",
+              "block": null,
+              "apartment": null,
+              "empty": false,
+              "incomplete": true
+            },
+            "usage": 50,
+            "monthConsumption": 82470,
+            "active": true,
+            "isOpen_24Hours": true,
+            "typeOf": "PUBLIC",
+            "origin": "MOVE",
+            "moneyPerKilowattCost": 1,
+            "moneyPerDurationCost": 0,
+            "moneyPerTransactionCost": 0,
+            "moneyPerTransactionIncome": 1,
+            "moneyPerKilowattIncome": 30,
+            "moneyPerDurationIncome": 0,
+            "registrationStatus": null,
+            "showLocation": true,
+            "chargeBoxGroupPk": 2164,
+            "chargeBoxGroupName": "Teste -Intelbras",
+            "tenantName": "Intelbras",
+            "openTime": null,
+            "closeTime": null,
+            "owner": null,
+            "master": null,
+            "isHubjectCompatible": false,
+            "reservation": true,
+            "hasPayment": false,
+            "externalId": "Business 22 KW 01",
+            "paymentChargeTypeCost": "KWH",
+            "paymentChargeTypeIncome": "KWH",
+            "paymentChargeByIncome": "CHARGE_BOX",
+            "taxIncome": 0,
+            "tenantPk": 19,
+            "tenantDeviceReader": true,
+            "deviceReaderMac": "FC:B6:9D:1F:C7:BC",
+            "isOcpiCompatible": false,
+            "isMode1And2Only": null,
+            "insertTimestamp": "2023-12-06 14:52:49",
+            "system": "SINGLE_PHASE",
+            "phase": "A",
+            "voltage": 220,
+            "chargingRateUnit": "A",
+            "hasSocPercentage": true,
+            "speedCount": {
+              "nrSlowTotal": 1,
+              "nrSlowAvailable": 0,
+              "nrFastTotal": 0,
+              "nrFastAvailable": 0
+            }
+          }
+        ],
+        "count": 5
+      }
+    },
+    {
+      "endpoint": "/api/v1/id-tag",
+      "method": "GET",
+      "success": false,
+      "timestamp": "2026-01-09T03:58:29.215Z",
+      "statusCode": 404,
+      "error": "Request failed with status code 404"
+    },
+    {
+      "endpoint": "/api/v1/transactions?limit=50",
+      "method": "GET",
+      "success": false,
+      "timestamp": "2026-01-09T03:58:29.475Z",
+      "statusCode": 404,
+      "error": "Request failed with status code 404"
+    },
+    {
+      "endpoint": "/api/v1/stats/all_stats",
+      "method": "GET",
+      "success": false,
+      "timestamp": "2026-01-09T03:58:29.818Z",
+      "statusCode": 404,
+      "error": "Request failed with status code 404"
+    },
+    {
+      "endpoint": "/api/v1/users_data/associated_users",
+      "method": "GET",
+      "success": false,
+      "timestamp": "2026-01-09T03:58:30.124Z",
+      "statusCode": 500,
+      "error": "Request failed with status code 500"
+    },
+    {
+      "endpoint": "/api/v1/brand",
+      "method": "GET",
+      "success": true,
+      "timestamp": "2026-01-09T03:58:30.434Z",
+      "statusCode": 200,
+      "data": {
+        "error": null,
+        "count": 0,
+        "results": [
+          {
+            "name": "BMW",
+            "id": 1
+          },
+          {
+            "name": "Chevrolet",
+            "id": 2
+          },
+          {
+            "name": "Tesla",
+            "id": 3
+          },
+          {
+            "name": "Nissan",
+            "id": 5
+          },
+          {
+            "name": "Volkswagen",
+            "id": 6
+          },
+          {
+            "name": "Land Rover",
+            "id": 7
+          },
+          {
+            "name": "Jaguar",
+            "id": 8
+          },
+          {
+            "name": "Renault",
+            "id": 9
+          },
+          {
+            "name": "JAC",
+            "id": 10
+          },
+          {
+            "name": "Audi",
+            "id": 11
+          },
+          {
+            "name": "Mercedes-Benz",
+            "id": 12
+          },
+          {
+            "name": "Porsche",
+            "id": 13
+          },
+          {
+            "name": "Fiat",
+            "id": 14
+          },
+          {
+            "name": "Mitsubishi",
+            "id": 15
+          },
+          {
+            "name": "BYD",
+            "id": 16
+          },
+          {
+            "name": "Citroen",
+            "id": 17
+          },
+          {
+            "name": "Ford",
+            "id": 18
+          },
+          {
+            "name": "Jeep",
+            "id": 19
+          },
+          {
+            "name": "Mini",
+            "id": 20
+          },
+          {
+            "name": "Volvo",
+            "id": 21
+          },
+          {
+            "name": "Peugeot",
+            "id": 22
+          },
+          {
+            "name": "Caoa Chery",
+            "id": 23
+          },
+          {
+            "name": "Toyota",
+            "id": 24
+          },
+          {
+            "name": "GWM",
+            "id": 25
+          },
+          {
+            "name": "nova",
+            "id": 26
+          },
+          {
+            "name": "JAECOO",
+            "id": 27
+          }
+        ],
+        "next": null,
+        "previous": null
+      }
+    },
+    {
+      "endpoint": "/api/v1/model",
+      "method": "GET",
+      "success": true,
+      "timestamp": "2026-01-09T03:58:30.739Z",
+      "statusCode": 200,
+      "data": {
+        "error": null,
+        "count": 0,
+        "results": [
+          {
+            "name": "I-PACE",
+            "brand": 8,
+            "id": 1
+          },
+          {
+            "name": "i3",
+            "brand": 1,
+            "id": 2
+          },
+          {
+            "name": "Bolt",
+            "brand": 2,
+            "id": 3
+          },
+          {
+            "name": "ZOE",
+            "brand": 9,
+            "id": 4
+          },
+          {
+            "name": "Model S",
+            "brand": 3,
+            "id": 5
+          },
+          {
+            "name": "Model 3",
+            "brand": 3,
+            "id": 6
+          },
+          {
+            "name": "Model X",
+            "brand": 3,
+            "id": 7
+          },
+          {
+            "name": "iEV20",
+            "brand": 10,
+            "id": 8
+          },
+          {
+            "name": "iEV40",
+            "brand": 10,
+            "id": 9
+          },
+          {
+            "name": "E-tron",
+            "brand": 11,
+            "id": 10
+          },
+          {
+            "name": "E-tron Sportback",
+            "brand": 11,
+            "id": 11
+          },
+          {
+            "name": "Leaf",
+            "brand": 5,
+            "id": 12
+          },
+          {
+            "name": "EQC",
+            "brand": 12,
+            "id": 13
+          },
+          {
+            "name": "Taycan 4S",
+            "brand": 13,
+            "id": 14
+          },
+          {
+            "name": "Taycan Turbo",
+            "brand": 13,
+            "id": 15
+          },
+          {
+            "name": "Taycan Turbo S",
+            "brand": 13,
+            "id": 16
+          },
+          {
+            "name": "Model Y",
+            "brand": 3,
+            "id": 17
+          },
+          {
+            "name": "500",
+            "brand": 14,
+            "id": 18
+          },
+          {
+            "name": "Outlander PHEV",
+            "brand": 15,
+            "id": 19
+          },
+          {
+            "name": "Q4 e-tron",
+            "brand": 11,
+            "id": 20
+          },
+          {
+            "name": "RS e-tron GT",
+            "brand": 11,
+            "id": 21
+          },
+          {
+            "name": "Q5 e-tron",
+            "brand": 11,
+            "id": 22
+          },
+          {
+            "name": "i4",
+            "brand": 1,
+            "id": 24
+          },
+          {
+            "name": "iX xDrive50 Sport",
+            "brand": 1,
+            "id": 25
+          },
+          {
+            "name": "iX xDrive40",
+            "brand": 1,
+            "id": 26
+          },
+          {
+            "name": "iX3 M SPORT",
+            "brand": 1,
+            "id": 27
+          },
+          {
+            "name": "330e",
+            "brand": 1,
+            "id": 28
+          },
+          {
+            "name": "530e",
+            "brand": 1,
+            "id": 29
+          },
+          {
+            "name": "X3 hybrid",
+            "brand": 1,
+            "id": 30
+          },
+          {
+            "name": "X5 hybrid",
+            "brand": 1,
+            "id": 31
+          },
+          {
+            "name": "T3 E delivery",
+            "brand": 16,
+            "id": 32
+          },
+          {
+            "name": "D1",
+            "brand": 16,
+            "id": 33
+          },
+          {
+            "name": "Han EV",
+            "brand": 16,
+            "id": 34
+          },
+          {
+            "name": "Tan EV",
+            "brand": 16,
+            "id": 35
+          },
+          {
+            "name": "Arizzo 5e",
+            "brand": 23,
+            "id": 36
+          },
+          {
+            "name": "Tiggo 8 Plug-in",
+            "brand": 23,
+            "id": 37
+          },
+          {
+            "name": "iCar",
+            "brand": 23,
+            "id": 38
+          },
+          {
+            "name": "Jumpy",
+            "brand": 17,
+            "id": 39
+          },
+          {
+            "name": "e-Scudo",
+            "brand": 14,
+            "id": 40
+          },
+          {
+            "name": "Transit",
+            "brand": 18,
+            "id": 41
+          },
+          {
+            "name": "eIEV40",
+            "brand": 10,
+            "id": 42
+          },
+          {
+            "name": "E-JS1",
+            "brand": 10,
+            "id": 43
+          },
+          {
+            "name": "E-JS4",
+            "brand": 10,
+            "id": 44
+          },
+          {
+            "name": "E-J7",
+            "brand": 10,
+            "id": 45
+          },
+          {
+            "name": "iEV 1200t",
+            "brand": 10,
+            "id": 46
+          },
+          {
+            "name": "iEV-330P",
+            "brand": 10,
+            "id": 47
+          },
+          {
+            "name": "E-JV7L",
+            "brand": 10,
+            "id": 48
+          },
+          {
+            "name": "E-JV5.5",
+            "brand": 10,
+            "id": 49
+          },
+          {
+            "name": "iEV750 Vip",
+            "brand": 10,
+            "id": 50
+          },
+          {
+            "name": "iEV750V",
+            "brand": 10,
+            "id": 51
+          },
+          {
+            "name": "E-JT 12,5",
+            "brand": 10,
+            "id": 52
+          },
+          {
+            "name": "E-JT18.0",
+            "brand": 10,
+            "id": 53
+          },
+          {
+            "name": "Range Rover",
+            "brand": 7,
+            "id": 54
+          },
+          {
+            "name": "Compass 4xe",
+            "brand": 19,
+            "id": 55
+          },
+          {
+            "name": "EQE 300",
+            "brand": 12,
+            "id": 56
+          },
+          {
+            "name": "EQS AMG 53",
+            "brand": 12,
+            "id": 57
+          },
+          {
+            "name": "EQA 250",
+            "brand": 12,
+            "id": 58
+          },
+          {
+            "name": "EQB 250",
+            "brand": 12,
+            "id": 59
+          },
+          {
+            "name": "Cooper S E Countryman",
+            "brand": 20,
+            "id": 60
+          },
+          {
+            "name": "Cooper S E",
+            "brand": 20,
+            "id": 61
+          },
+          {
+            "name": "Leaf e+",
+            "brand": 5,
+            "id": 62
+          },
+          {
+            "name": "e-208",
+            "brand": 22,
+            "id": 63
+          },
+          {
+            "name": "e-2008",
+            "brand": 22,
+            "id": 64
+          },
+          {
+            "name": "e-Expert",
+            "brand": 22,
+            "id": 65
+          },
+          {
+            "name": "Taycan Performance Plus",
+            "brand": 13,
+            "id": 66
+          },
+          {
+            "name": "Taycan 4 Cross Turismo",
+            "brand": 13,
+            "id": 67
+          },
+          {
+            "name": "Taycan Performance",
+            "brand": 13,
+            "id": 68
+          },
+          {
+            "name": "Taycan 4S Performance Plus",
+            "brand": 13,
+            "id": 69
+          },
+          {
+            "name": "Taycan 4S Performance",
+            "brand": 13,
+            "id": 70
+          },
+          {
+            "name": "Taycan 4S Cross Turismo",
+            "brand": 13,
+            "id": 71
+          },
+          {
+            "name": "Taycan GTS",
+            "brand": 13,
+            "id": 72
+          },
+          {
+            "name": "Cayenne E-Hybrid",
+            "brand": 13,
+            "id": 74
+          },
+          {
+            "name": "Cayenne Turbo S E-Hybrid",
+            "brand": 13,
+            "id": 75
+          },
+          {
+            "name": "Panamera 4 E-Hybrid",
+            "brand": 13,
+            "id": 76
+          },
+          {
+            "name": "e-Kangoo",
+            "brand": 9,
+            "id": 77
+          },
+          {
+            "name": "Kwid e-tech",
+            "brand": 9,
+            "id": 78
+          },
+          {
+            "name": "Model X Long Range/Plaid",
+            "brand": 3,
+            "id": 79
+          },
+          {
+            "name": "Modelo X 90D",
+            "brand": 3,
+            "id": 80
+          },
+          {
+            "name": "Model 3 Standard range",
+            "brand": 3,
+            "id": 81
+          },
+          {
+            "name": "Model 3 Mid Range",
+            "brand": 3,
+            "id": 82
+          },
+          {
+            "name": "Model 3 Long Range",
+            "brand": 3,
+            "id": 83
+          },
+          {
+            "name": "Model Y Performance",
+            "brand": 3,
+            "id": 85
+          },
+          {
+            "name": "Model Y Long Range",
+            "brand": 3,
+            "id": 86
+          },
+          {
+            "name": "Prius - Plug-In",
+            "brand": 24,
+            "id": 87
+          },
+          {
+            "name": "S60 Recharge",
+            "brand": 21,
+            "id": 88
+          },
+          {
+            "name": "S60 T6 Recharge",
+            "brand": 21,
+            "id": 89
+          },
+          {
+            "name": "S60 T8 Recharge",
+            "brand": 21,
+            "id": 90
+          },
+          {
+            "name": "S90 T8 Twin-Engine",
+            "brand": 21,
+            "id": 91
+          },
+          {
+            "name": "XC40 P8 AWD Recharge",
+            "brand": 21,
+            "id": 92
+          },
+          {
+            "name": "XC40 T4 Recharge",
+            "brand": 21,
+            "id": 93
+          },
+          {
+            "name": "XC40 T5 Recharge",
+            "brand": 21,
+            "id": 94
+          },
+          {
+            "name": "XC60 Recharge",
+            "brand": 21,
+            "id": 95
+          },
+          {
+            "name": "XC90 Recharge",
+            "brand": 21,
+            "id": 96
+          },
+          {
+            "name": "C40 Recharge",
+            "brand": 21,
+            "id": 97
+          },
+          {
+            "name": "Velar",
+            "brand": 7,
+            "id": 98
+          },
+          {
+            "name": "YUAN PLUS EV",
+            "brand": 16,
+            "id": 99
+          },
+          {
+            "name": "Song Plus",
+            "brand": 16,
+            "id": 100
+          },
+          {
+            "name": "Sport Híbrido Plug-In",
+            "brand": 7,
+            "id": 101
+          },
+          {
+            "name": "Haval H6 GT",
+            "brand": 25,
+            "id": 102
+          },
+          {
+            "name": "King",
+            "brand": 16,
+            "id": 103
+          },
+          {
+            "name": "modelo 01",
+            "brand": 26,
+            "id": 104
+          },
+          {
+            "name": "JAECOO",
+            "brand": 27,
+            "id": 105
+          },
+          {
+            "name": "BYD King 2025",
+            "brand": 16,
+            "id": 106
+          }
+        ],
+        "next": null,
+        "previous": null
+      }
+    }
+  ]
+}
