@@ -9,6 +9,9 @@
     "start": "node dist/index.js",
     "clean": "rm -rf dist",
     "db:init": "ts-node -e \"require('./src/config/database').initDatabase()\"",
+    "migrate": "ts-node src/database/index.ts run",
+    "migrate:status": "ts-node src/database/index.ts status",
+    "migrate:rollback": "ts-node src/database/index.ts rollback",
     "seed:moradores": "ts-node run-seed-moradores.ts"
   },
   "keywords": [
