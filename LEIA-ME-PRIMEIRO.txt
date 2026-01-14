@@ -7,11 +7,26 @@
     ✅ apps/backend/     → Backend API (Node.js)
     ✅ apps/frontend/    → Dashboard Web (React)
     ✅ docs/             → Documentação organizada
+    ✅ 🐳 Docker         → Deploy simplificado
     ✅ README.md         → Documentação principal
 
 ═══════════════════════════════════════════════════════════════
 
-🚀 PRÓXIMO PASSO: ENVIAR PARA GITHUB (5 minutos)
+🐳 RODAR COM DOCKER (RECOMENDADO - 3 comandos):
+
+    $ cp docker.env.example .env
+    $ nano .env  # Adicionar credenciais
+    $ docker-compose up -d
+
+    Pronto! Acesse:
+    → Frontend: http://localhost:3000
+    → Backend:  http://localhost:3001
+
+    Ver: DOCKER_QUICKSTART.md
+
+═══════════════════════════════════════════════════════════════
+
+🚀 PRÓXIMO PASSO PARA GITHUB:
 
     1. Abra: START_HERE_GITHUB.md
     2. Siga os 3 passos
@@ -21,15 +36,16 @@
 
 📚 DOCUMENTOS IMPORTANTES:
 
-    🔥 START_HERE_GITHUB.md          → Colocar no GitHub (5 min)
+    🐳 DOCKER_QUICKSTART.md          → Docker em 5 min (NOVO!)
+    🐳 DOCKER_GUIDE.md               → Guia completo Docker (NOVO!)
+    🔥 START_HERE_GITHUB.md          → Colocar no GitHub
     📖 README.md                      → Visão geral completa
     📋 RESUMO_ORGANIZACAO.md          → O que foi feito
     🔧 GIT_SETUP.md                   → Guia completo de Git
-    📦 ORGANIZACAO_FINAL.md           → Estrutura detalhada
 
 ═══════════════════════════════════════════════════════════════
 
-🎯 PARA RODAR LOCALMENTE:
+🎯 PARA RODAR LOCALMENTE (Sem Docker):
 
     Backend:
     $ cd apps/backend
@@ -46,7 +62,7 @@
 ✅ TUDO PRONTO PARA:
 
     ✓ Versionar no GitHub
-    ✓ Deploy em VPS
+    ✓ Deploy em VPS (com Docker!)
     ✓ Trabalho em equipe
     ✓ Produção
 
@@ -54,10 +70,11 @@
 
 📞 DÚVIDAS?
 
-    → Veja README.md
-    → Veja docs/00-INDICE.md
+    → Docker: DOCKER_QUICKSTART.md ou DOCKER_GUIDE.md
+    → GitHub: START_HERE_GITHUB.md
+    → Geral: README.md
+    → Docs: docs/00-INDICE.md
 
 ═══════════════════════════════════════════════════════════════
 
-Projeto VETRIC - Janeiro 2026 - Organizado com Sucesso! 🎉
-
+Projeto VETRIC - Janeiro 2026 - Organizado e Dockerizado! 🎉🐳

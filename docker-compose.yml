@@ -1,0 +1,128 @@
+# ===================================
+# VETRIC - Docker Compose
+# Orquestração completa do sistema
+# ===================================
+
+version: '3.8'
+
+services:
+  # ========== BANCO DE DADOS ==========
+  postgres:
+    image: postgres:15-alpine
+    container_name: vetric-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vetric_cve}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=pt_BR.UTF-8"
+      TZ: America/Sao_Paulo
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./apps/backend/src/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - vetric-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========== BACKEND API ==========
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: vetric-backend
+    restart: unless-stopped
+    environment:
+      # Servidor
+      PORT: 3001
+      NODE_ENV: ${NODE_ENV:-production}
+      
+      # Banco de Dados
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-vetric_cve}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      
+      # CVE-PRO API
+      CVE_API_URL: ${CVE_API_URL}
+      CVE_EMAIL: ${CVE_EMAIL}
+      CVE_PASSWORD: ${CVE_PASSWORD}
+      
+      # Evolution API (Opcional)
+      EVOLUTION_API_URL: ${EVOLUTION_API_URL:-}
+      EVOLUTION_API_KEY: ${EVOLUTION_API_KEY:-}
+      EVOLUTION_INSTANCE_NAME: ${EVOLUTION_INSTANCE_NAME:-}
+      
+      # Polling
+      POLLING_INTERVAL: ${POLLING_INTERVAL:-30000}
+      
+      # WebSocket
+      ENABLE_WEBSOCKET: ${ENABLE_WEBSOCKET:-true}
+      
+      # CORS
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:5173}
+      
+      # Timezone
+      TZ: America/Sao_Paulo
+    ports:
+      - "3001:3001"
+    volumes:
+      - backend-uploads:/app/uploads
+    networks:
+      - vetric-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+
+  # ========== FRONTEND DASHBOARD ==========
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+    container_name: vetric-frontend
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+    ports:
+      - "3000:4173"
+    networks:
+      - vetric-network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4173', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+# ========== VOLUMES ==========
+volumes:
+  postgres-data:
+    driver: local
+  backend-uploads:
+    driver: local
+
+# ========== NETWORKS ==========
+networks:
+  vetric-network:
+    driver: bridge
+

@@ -60,7 +60,26 @@ VETRIC - CVE/
 
 ## 🚀 QUICK START
 
-### **1. Backend**
+### **Opção 1: Com Docker (RECOMENDADO) 🐳**
+
+```bash
+# 1. Configurar variáveis
+cp docker.env.example .env
+nano .env  # Adicionar suas credenciais
+
+# 2. Subir todo o sistema (Backend + Frontend + PostgreSQL)
+docker-compose up -d
+
+# 3. Acessar
+# Frontend: http://localhost:3000
+# Backend: http://localhost:3001
+```
+
+**Ver:** [DOCKER_QUICKSTART.md](./DOCKER_QUICKSTART.md) (5 minutos)
+
+### **Opção 2: Desenvolvimento Local (Sem Docker)**
+
+**1. Backend:**
 
 ```bash
 # Entre na pasta do backend
@@ -81,7 +100,7 @@ npm run dev
 
 Backend estará rodando em: `http://localhost:3001`
 
-### **2. Frontend**
+**2. Frontend:**
 
 ```bash
 # Entre na pasta do frontend
@@ -138,6 +157,11 @@ Toda a documentação técnica está na pasta `/docs/`:
 - CVE-PRO API (Intelbras)
 - Evolution API (WhatsApp)
 
+### **DevOps**
+- Docker & Docker Compose
+- Nginx (para frontend em produção)
+- PM2 (alternativa ao Docker)
+
 ---
 
 ## 🏗️ ARQUITETURA
@@ -191,7 +215,35 @@ Toda a documentação técnica está na pasta `/docs/`:
 
 ## 🌐 DEPLOY EM PRODUÇÃO
 
-### **Requisitos VPS**
+### **Opção 1: Deploy com Docker (RECOMENDADO) 🐳**
+
+```bash
+# Na VPS
+git clone https://github.com/SEU-USUARIO/vetric-cve.git
+cd vetric-cve
+
+# Configurar .env de produção
+cp docker.env.example .env
+nano .env
+
+# Subir sistema
+docker-compose up -d
+
+# Configurar Nginx reverse proxy (opcional)
+# Para SSL e domínio personalizado
+```
+
+**Vantagens:**
+- ✅ Setup rápido e fácil
+- ✅ Isolamento completo
+- ✅ Portabilidade garantida
+- ✅ Fácil escalabilidade
+
+**Ver:** [DOCKER_GUIDE.md](./DOCKER_GUIDE.md) para guia completo
+
+### **Opção 2: Deploy Tradicional (PM2 + Nginx)**
+
+**Requisitos VPS:**
 
 - Ubuntu 22.04 LTS
 - Node.js 18+
@@ -200,7 +252,7 @@ Toda a documentação técnica está na pasta `/docs/`:
 - PM2
 - SSL (Let's Encrypt)
 
-### **Arquitetura Recomendada**
+**Arquitetura:**
 
 ```
 Nginx (Proxy Reverso)
