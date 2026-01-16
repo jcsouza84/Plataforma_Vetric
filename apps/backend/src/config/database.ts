@@ -15,7 +15,6 @@ export const sequelize = process.env.DATABASE_URL
       dialect: 'postgres',
       dialectOptions: {
         ssl: {
-          require: true,
           rejectUnauthorized: false
         }
       },
@@ -37,7 +36,6 @@ export const pool = process.env.DATABASE_URL
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: {
-        require: true,
         rejectUnauthorized: false
       },
       max: 20,
