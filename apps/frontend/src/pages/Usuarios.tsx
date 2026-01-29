@@ -10,6 +10,7 @@ import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMoradores, useDeleteMorador } from '@/hooks/useVetricData';
 import { EditarMoradorModal } from '@/components/modals/EditarMoradorModal';
+import { CriarMoradorModal } from '@/components/modals/CriarMoradorModal';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +34,7 @@ export default function Usuarios() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMorador, setSelectedMorador] = useState<any>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   // Filtrar moradores
   const filteredMoradores = moradores?.filter((m: any) => {
@@ -67,7 +69,10 @@ export default function Usuarios() {
 
           {/* Botão Adicionar (Admin only) */}
           {isAdmin && (
-            <Button className="gap-2">
+            <Button 
+              className="gap-2"
+              onClick={() => setCreateModalOpen(true)}
+            >
               <UserPlus size={18} />
               Novo Morador
             </Button>
@@ -210,6 +215,12 @@ export default function Usuarios() {
           </Table>
         )}
       </div>
+      {/* Modal de Criação */}
+      <CriarMoradorModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
+
       {/* Modal de Edição */}
       {selectedMorador && (
         <EditarMoradorModal
