@@ -23,6 +23,8 @@ import { DashboardEmpreendimento } from "./pages/relatorios-vetric/DashboardEmpr
 import { UploadRelatorio } from "./pages/relatorios-vetric/UploadRelatorio";
 import { ListaRelatorios } from "./pages/relatorios-vetric/ListaRelatorios";
 import { VisualizarRelatorio } from "./pages/relatorios-vetric/VisualizarRelatorio";
+import UsuariosRelatorio from "./pages/relatorios-vetric/UsuariosRelatorio";
+import ConfiguracoesRelatorio from "./pages/relatorios-vetric/ConfiguracoesRelatorio";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +105,16 @@ const App = () => (
             <Route path="/relatorios-vetric/:id/relatorios/:relatorioId" element={
               <PrivateRoute allowedRoles={['ADMIN']}>
                 <VisualizarRelatorio />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:empreendimentoId/usuarios" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <UsuariosRelatorio />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:empreendimentoId/configuracoes" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <ConfiguracoesRelatorio />
               </PrivateRoute>
             } />
             
