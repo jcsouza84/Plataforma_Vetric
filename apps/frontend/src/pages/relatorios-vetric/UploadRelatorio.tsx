@@ -1,13 +1,23 @@
 /**
  * 📤 VETRIC Reports - Upload de Relatório (XLSX)
+ * 🆕 COM PREVIEW COMPLETO: Gráficos, Resumos, Detalhamento
  */
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Upload, FileText, ArrowLeft, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, ArrowLeft, Loader2, CheckCircle, AlertCircle, FileSpreadsheet, Calendar, DollarSign, Zap, Clock, Users as UsersIcon, BarChart3, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export function UploadRelatorio() {
   const { id } = useParams();
@@ -58,17 +68,13 @@ export function UploadRelatorio() {
         setPreview(data);
       } else {
         const error = await response.json();
-        toast({
-          title: 'Erro no preview',
-          description: error.error || 'Não foi possível processar o arquivo',
-          variant: 'destructive',
-        });
+        throw new Error(error.error || 'Erro ao processar arquivo');
       }
-    } catch (error) {
-      console.error('Erro:', error);
+    } catch (error: any) {
+      console.error('Erro no preview:', error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível processar o arquivo',
+        title: 'Erro no preview',
+        description: error.message || 'Não foi possível processar o arquivo',
         variant: 'destructive',
       });
     } finally {
@@ -97,23 +103,19 @@ export function UploadRelatorio() {
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: 'Sucesso!',
-          description: 'Relatório gerado com sucesso e salvo no banco de dados!',
+          title: 'Relatório gerado!',
+          description: 'O relatório foi salvo com sucesso',
         });
-        navigate(`/relatorios-vetric/${id}/relatorios/${data.relatorioId}`);
+        navigate(`/vetric-reports/${id}/relatorios`);
       } else {
         const error = await response.json();
-        toast({
-          title: 'Erro ao gerar relatório',
-          description: error.error || 'Não foi possível gerar o relatório',
-          variant: 'destructive',
-        });
+        throw new Error(error.error || 'Erro ao gerar relatório');
       }
-    } catch (error) {
-      console.error('Erro:', error);
+    } catch (error: any) {
+      console.error('Erro ao gerar:', error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível gerar o relatório',
+        title: 'Erro ao gerar relatório',
+        description: error.message || 'Não foi possível gerar o relatório',
         variant: 'destructive',
       });
     } finally {
@@ -123,190 +125,328 @@ export function UploadRelatorio() {
 
   return (
     <DashboardLayout>
-    <div className="p-6 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(`/relatorios-vetric/${id}`)}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar
-        </Button>
+      <div>
+        {/* Header */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(`/vetric-reports/${id}`)}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Voltar
+          </Button>
 
-        <div className="flex items-center gap-3 mb-2">
-          <Upload className="w-8 h-8 text-orange-500" />
-          <h1 className="text-3xl font-bold text-gray-900">
-            Gerar Novo Relatório
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload de Planilha</h1>
+          <p className="text-gray-600">Importe os dados de carregamento do CVE Pro</p>
         </div>
-        <p className="text-gray-600">
-          Faça upload de uma planilha XLSX exportada do sistema de carregamento
-        </p>
-      </div>
 
-      {/* Upload Area */}
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-        <div className="space-y-6">
-          {/* File Input */}
-          <div>
-            <label
-              htmlFor="file-upload"
-              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-all"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <FileText className="w-12 h-12 text-gray-400 mb-3" />
-                <p className="mb-2 text-sm text-gray-700">
-                  <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
-                </p>
-                <p className="text-xs text-gray-500">Arquivo XLSX ou XLS</p>
+        {/* Área de Upload */}
+        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+              <FileSpreadsheet className="w-6 h-6 text-orange-500" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                1. Importar Extrato CVE Pro
+              </h3>
+              <p className="text-sm text-gray-600">Formato: .xlsx ou .xls</p>
+            </div>
+          </div>
+
+          {/* Input de arquivo */}
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-orange-500 transition-colors">
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileChange}
+              className="hidden"
+              id="file-upload"
+            />
+            <label htmlFor="file-upload" className="cursor-pointer">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <Upload className="w-8 h-8 text-gray-400" />
               </div>
-              <input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                accept=".xlsx,.xls"
-                onChange={handleFileChange}
-              />
+              {file ? (
+                <div>
+                  <p className="text-lg font-semibold text-gray-900 mb-2">{file.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFile(null);
+                      setPreview(null);
+                    }}
+                    className="mt-4 text-sm text-orange-500 hover:text-orange-600"
+                  >
+                    Remover arquivo
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-lg font-semibold text-gray-900 mb-2">
+                    Clique para selecionar o arquivo
+                  </p>
+                  <p className="text-sm text-gray-500">Formatos aceitos: .xlsx, .xls</p>
+                </div>
+              )}
             </label>
           </div>
 
-          {/* Arquivo Selecionado */}
-          {file && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-6 h-6 text-orange-500" />
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">{file.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {(file.size / 1024).toFixed(2)} KB
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setFile(null);
-                    setPreview(null);
-                  }}
-                >
-                  Remover
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Botões */}
+          {/* Botão de Preview */}
           {file && !preview && (
-            <Button
-              onClick={handlePreview}
-              disabled={previewLoading}
-              className="w-full bg-blue-500 hover:bg-blue-600"
-            >
-              {previewLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Validando...
-                </>
-              ) : (
-                'Validar Arquivo'
-              )}
-            </Button>
+            <div className="mt-6">
+              <Button
+                onClick={handlePreview}
+                disabled={previewLoading}
+                className="w-full bg-orange-500 hover:bg-orange-600"
+              >
+                {previewLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Visualizar Preview
+                  </>
+                )}
+              </Button>
+            </div>
           )}
         </div>
-      </div>
 
-      {/* Preview */}
-      {preview && (
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            Validação do Arquivo
-          </h3>
+        {/* Preview Completo */}
+        {preview && (
+          <>
+            {/* Cards de Resumo */}
+            <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">2. Preview dos Dados</h3>
+                  <p className="text-sm text-gray-600">Revise antes de gerar o relatório</p>
+                </div>
+              </div>
 
-          <div className="space-y-4">
-            {/* Resumo */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4">
-                <p className="text-sm text-blue-600 font-medium mb-1">Mês/Ano</p>
-                <p className="text-2xl font-bold text-blue-900">{preview.mesAno}</p>
+              {/* Estatísticas */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gray-50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="w-4 h-4 text-gray-500" />
+                    <p className="text-xs font-semibold text-gray-600 uppercase">Total</p>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{preview.totalRegistros}</p>
+                </div>
+
+                <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <p className="text-xs font-semibold text-green-700 uppercase">Válidos</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-700">{preview.validos}</p>
+                </div>
+
+                <div className="bg-red-50 rounded-lg p-4 border-2 border-red-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    <p className="text-xs font-semibold text-red-700 uppercase">Rejeitados</p>
+                  </div>
+                  <p className="text-2xl font-bold text-red-700">{preview.rejeitados}</p>
+                </div>
+
+                <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <p className="text-xs font-semibold text-blue-700 uppercase">Período</p>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-700">{preview.mesAno}</p>
+                </div>
               </div>
-              <div className="bg-green-50 rounded-lg p-4">
-                <p className="text-sm text-green-600 font-medium mb-1">Validados</p>
-                <p className="text-2xl font-bold text-green-900">{preview.validos}</p>
-              </div>
-              <div className="bg-red-50 rounded-lg p-4">
-                <p className="text-sm text-red-600 font-medium mb-1">Rejeitados</p>
-                <p className="text-2xl font-bold text-red-900">{preview.rejeitados}</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 font-medium mb-1">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{preview.totalRegistros}</p>
-              </div>
+
+              {/* Resumo Geral */}
+              {preview.resumoGeral && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 border border-orange-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="w-5 h-5 text-orange-600" />
+                      <p className="text-sm font-semibold text-orange-900">Consumo Total</p>
+                    </div>
+                    <p className="text-3xl font-bold text-orange-900">
+                      {preview.resumoGeral.totalConsumo.toFixed(2)} kWh
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                      <p className="text-sm font-semibold text-green-900">Valor Total</p>
+                    </div>
+                    <p className="text-3xl font-bold text-green-900">
+                      R$ {preview.resumoGeral.totalValor.toFixed(2)}
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                      <p className="text-sm font-semibold text-blue-900">Recargas</p>
+                    </div>
+                    <p className="text-3xl font-bold text-blue-900">
+                      {preview.resumoGeral.totalRecargas}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Alertas */}
+              {preview.alertas && preview.alertas.length > 0 && (
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-yellow-900 mb-2">Atenção:</p>
+                      <ul className="text-sm text-yellow-800 space-y-1">
+                        {preview.alertas.map((alerta: string, idx: number) => (
+                          <li key={idx}>• {alerta}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Alertas */}
-            {preview.alertas && preview.alertas.length > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-yellow-900 mb-2">Alertas:</p>
-                    <ul className="space-y-1">
-                      {preview.alertas.map((alerta: string, index: number) => (
-                        <li key={index} className="text-sm text-yellow-800">
-                          • {alerta}
-                        </li>
-                      ))}
-                    </ul>
+            {/* Gráfico de Consumo por Estação */}
+            {preview.dadosGrafico && preview.dadosGrafico.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <BarChart3 className="w-6 h-6 text-purple-600" />
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Consumo por Estação de Carregamento
+                  </h3>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={preview.dadosGrafico}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="estacao" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="consumo" fill="#f97316" name="Consumo (kWh)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Resumo de Ociosidade */}
+            {preview.resumoOciosidade && (
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Clock className="w-6 h-6 text-red-600" />
+                  <h3 className="text-lg font-semibold text-gray-900">Resumo de Ociosidade</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <p className="text-sm text-red-700 mb-1">Total de Ocorrências</p>
+                    <p className="text-2xl font-bold text-red-900">
+                      {preview.resumoOciosidade.totalOcorrencias}
+                    </p>
+                  </div>
+                  <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <p className="text-sm text-red-700 mb-1">Tempo Total Ocioso</p>
+                    <p className="text-2xl font-bold text-red-900">
+                      {preview.resumoOciosidade.tempoTotalOciosoFormatado}
+                    </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Sucesso ou Falha */}
-            {preview.validos > 0 ? (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <p className="text-green-800">
-                    Arquivo validado com sucesso! {preview.validos} transações serão processadas.
-                  </p>
+            {/* Detalhamento por Morador */}
+            {preview.resumoPorUsuario && preview.resumoPorUsuario.length > 0 && (
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <UsersIcon className="w-6 h-6 text-indigo-600" />
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Detalhamento por Morador (Top 10)
+                  </h3>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                  <p className="text-red-800">
-                    Nenhuma transação válida encontrada. Verifique os alertas acima.
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Morador</TableHead>
+                      <TableHead>Unidade</TableHead>
+                      <TableHead className="text-right">Recargas</TableHead>
+                      <TableHead className="text-right">Consumo (kWh)</TableHead>
+                      <TableHead className="text-right">Valor (R$)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {preview.resumoPorUsuario.slice(0, 10).map((usuario: any, idx: number) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{usuario.nome}</TableCell>
+                        <TableCell>
+                          {usuario.torre} - {usuario.unidade}
+                        </TableCell>
+                        <TableCell className="text-right">{usuario.recargas}</TableCell>
+                        <TableCell className="text-right">
+                          {usuario.consumo.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          R$ {usuario.valor.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {preview.resumoPorUsuario.length > 10 && (
+                  <p className="text-sm text-gray-500 mt-4 text-center">
+                    + {preview.resumoPorUsuario.length - 10} moradores não exibidos
                   </p>
-                </div>
+                )}
               </div>
             )}
 
-            {/* Botão de Gerar */}
-            {preview.validos > 0 && (
+            {/* Botão de Gerar Relatório */}
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setFile(null);
+                  setPreview(null);
+                }}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
               <Button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full bg-orange-500 hover:bg-orange-600"
+                className="flex-1 bg-green-600 hover:bg-green-700"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Gerando Relatório...
+                    Gerando...
                   </>
                 ) : (
-                  'Gerar Relatório Completo'
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Gerar Relatório Final
+                  </>
                 )}
               </Button>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+            </div>
+          </>
+        )}
+      </div>
     </DashboardLayout>
   );
 }
-

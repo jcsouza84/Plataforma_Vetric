@@ -19,7 +19,8 @@ export const uploadMiddleware = multer({ storage });
 
 export class RelatorioController {
   /**
-   * Preview da planilha XLSX (validação antes de gerar)
+   * Preview da planilha XLSX (validação E preview completo antes de gerar)
+   * 🆕 Inclui: gráficos, resumos, ociosidade, detalhamento por morador
    */
   static async previewXLSX(req: Request, res: Response) {
     try {
@@ -45,8 +46,8 @@ export class RelatorioController {
       }
 
       // Processar XLSX
-      const dados = await processarXLSX(req.file.buffer);
-      const mesAno = detectarMesAno(dados);
+      const dadosNormalizados = await processarXLSX(req.file.buffer);
+      const mesAno = detectarMesAno(dadosNormalizados);
 
       // Criar mapa de TAGs
       const tagMap = new Map<string, any>();
@@ -56,15 +57,18 @@ export class RelatorioController {
         });
       });
 
-      // Validar cada transação
-      const transacoes = dados.map((carga) => {
-        const tag = carga.tag;
-        const usuario = tagMap.get(tag);
+      // Processar cargas válidas E rejeitadas (para preview completo)
+      const cargasProcessadas: any[] = [];
+      const cargasRejeitadas: any[] = [];
+
+      dadosNormalizados.forEach((carga) => {
+        const usuario = tagMap.get(carga.tag);
+        
+        // Validações
         let status: 'validada' | 'rejeitada' = 'validada';
         let motivo = '';
 
-        // Validações
-        if (!tag || !tagMap.has(tag)) {
+        if (!carga.tag || !tagMap.has(carga.tag)) {
           status = 'rejeitada';
           motivo = 'TAG não cadastrada';
         } else if (carga.energia <= 0) {
@@ -78,30 +82,112 @@ export class RelatorioController {
           motivo = 'Formato de data inválido';
         }
 
-        return {
-          id: carga.id,
-          estacao: carga.estacao,
-          tag: carga.tag,
-          usuario: usuario?.nome || 'Desconhecido',
-          unidade: usuario?.unidade || '',
-          torre: usuario?.torre || '',
-          intervalo: carga.intervalo,
-          energia: carga.energia,
-          status,
-          motivo,
-        };
+        if (status === 'rejeitada') {
+          cargasRejeitadas.push({
+            id: carga.id,
+            estacao: carga.estacao,
+            tag: carga.tag,
+            usuario: usuario?.nome || 'Desconhecido',
+            intervalo: carga.intervalo,
+            energia: carga.energia,
+            motivo,
+          });
+        } else {
+          // Calcular tarifas
+          const janelas = calcularJanelas(carga.intervalo, carga.energia, config);
+          const energiaPonta = janelas.ponta;
+          const energiaForaPonta = janelas.foraPonta;
+          const valorPonta = energiaPonta * config.tarifa_ponta;
+          const valorForaPonta = energiaForaPonta * config.tarifa_fora_ponta;
+          const valorTotal = valorPonta + valorForaPonta;
+
+          cargasProcessadas.push({
+            ...carga,
+            usuario,
+            energiaPonta,
+            energiaForaPonta,
+            valorPonta,
+            valorForaPonta,
+            valorTotal,
+            janelas,
+          });
+        }
       });
 
-      // Contar validadas vs rejeitadas
-      const validos = transacoes.filter((t) => t.status === 'validada').length;
-      const rejeitados = transacoes.filter((t) => t.status === 'rejeitada').length;
+      // Calcular resumo geral
+      const totalRecargas = cargasProcessadas.length;
+      const totalConsumo = cargasProcessadas.reduce((sum, c) => sum + c.energia, 0);
+      const totalValor = cargasProcessadas.reduce((sum, c) => sum + c.valorTotal, 0);
+      const totalConsumoPonta = cargasProcessadas.reduce((sum, c) => sum + c.energiaPonta, 0);
+      const totalConsumoForaPonta = cargasProcessadas.reduce((sum, c) => sum + c.energiaForaPonta, 0);
 
-      // Agrupar alertas por motivo
-      const alertasMap = new Map<string, number>();
-      transacoes.forEach((t) => {
-        if (t.status === 'rejeitada' && t.motivo) {
-          alertasMap.set(t.motivo, (alertasMap.get(t.motivo) || 0) + 1);
+      // Consumo por estação
+      const consumoPorEstacao = new Map<string, { consumo: number; recargas: number }>();
+      cargasProcessadas.forEach((carga) => {
+        const estacao = carga.estacao;
+        const current = consumoPorEstacao.get(estacao) || { consumo: 0, recargas: 0 };
+        consumoPorEstacao.set(estacao, {
+          consumo: current.consumo + carga.energia,
+          recargas: current.recargas + 1,
+        });
+      });
+
+      const dadosGrafico = Array.from(consumoPorEstacao.entries())
+        .map(([estacao, data]) => ({
+          estacao,
+          consumo: Number(data.consumo.toFixed(2)),
+          recargas: data.recargas,
+        }))
+        .sort((a, b) => b.consumo - a.consumo);
+
+      // Processar ociosidade
+      const { totalOcorrencias, tempoTotalOcioso } = processarOciosidade(
+        cargasProcessadas,
+        config.limite_ociosidade_min
+      );
+
+      // Resumo por usuário
+      const usuariosMap = new Map<string, any>();
+      cargasProcessadas.forEach((carga) => {
+        const userId = carga.usuario?.id || 'desconhecido';
+        
+        if (!usuariosMap.has(userId)) {
+          usuariosMap.set(userId, {
+            nome: carga.usuario?.nome || 'Desconhecido',
+            unidade: carga.usuario?.unidade || '',
+            torre: carga.usuario?.torre || '',
+            recargas: 0,
+            consumo: 0,
+            valor: 0,
+            ocorrenciasOciosidade: 0,
+            tempoOcioso: 0,
+          });
         }
+
+        const userData = usuariosMap.get(userId);
+        userData.recargas += 1;
+        userData.consumo += carga.energia;
+        userData.valor += carga.valorTotal;
+
+        // Ociosidade
+        if (carga.tempoOcioso && carga.tempoOcioso >= config.limite_ociosidade_min) {
+          userData.ocorrenciasOciosidade += 1;
+          userData.tempoOcioso += carga.tempoOcioso;
+        }
+      });
+
+      const resumoPorUsuario = Array.from(usuariosMap.values())
+        .map((u) => ({
+          ...u,
+          consumo: Number(u.consumo.toFixed(2)),
+          valor: Number(u.valor.toFixed(2)),
+        }))
+        .sort((a, b) => b.consumo - a.consumo);
+
+      // Alertas
+      const alertasMap = new Map<string, number>();
+      cargasRejeitadas.forEach((c) => {
+        alertasMap.set(c.motivo, (alertasMap.get(c.motivo) || 0) + 1);
       });
 
       const alertas = Array.from(alertasMap.entries()).map(
@@ -110,11 +196,36 @@ export class RelatorioController {
 
       res.json({
         mesAno,
-        totalRegistros: transacoes.length,
-        validos,
-        rejeitados,
+        totalRegistros: dadosNormalizados.length,
+        validos: cargasProcessadas.length,
+        rejeitados: cargasRejeitadas.length,
         alertas,
-        transacoes,
+        
+        // 🆕 DADOS COMPLETOS PARA PREVIEW
+        resumoGeral: {
+          totalRecargas,
+          totalConsumo: Number(totalConsumo.toFixed(2)),
+          totalValor: Number(totalValor.toFixed(2)),
+          totalConsumoPonta: Number(totalConsumoPonta.toFixed(2)),
+          totalConsumoForaPonta: Number(totalConsumoForaPonta.toFixed(2)),
+        },
+        consumoPorEstacao: dadosGrafico,
+        dadosGrafico,
+        resumoOciosidade: {
+          totalOcorrencias,
+          tempoTotalOcioso,
+          tempoTotalOciosoFormatado: formatarDuracaoLegivel(tempoTotalOcioso),
+        },
+        resumoPorUsuario,
+        cargasRejeitadas,
+        empreendimento: {
+          nome: empreendimento.nome,
+          sistema: empreendimento.sistema_carregamento,
+        },
+        config: {
+          tarifaPonta: config.tarifa_ponta,
+          tarifaForaPonta: config.tarifa_fora_ponta,
+        },
       });
     } catch (error) {
       console.error('Erro no preview:', error);
