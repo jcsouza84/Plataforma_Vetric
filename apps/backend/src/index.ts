@@ -20,10 +20,13 @@ import moradoresRoutes from './routes/moradores';
 import carregamentosRoutes from './routes/carregamentos';
 import templatesRoutes from './routes/templates';
 import dashboardRoutes from './routes/dashboard';
-import relatoriosRoutes from './routes/relatorios';
+import relatoriosRoutes from './routes/relatorios'; // Sistema antigo (upload de PDFs)
 import testEvolutionRoutes from './routes/testEvolution';
 import configRoutes from './routes/config';
 import systemRoutes from './routes/system';
+
+// 🆕 Sistema de Relatórios V2 (VETRIC Reports)
+import vetricReportsRoutes from './relatorios/routes';
 
 dotenv.config();
 
@@ -108,10 +111,13 @@ app.use('/api/moradores', moradoresRoutes);
 app.use('/api/carregamentos', carregamentosRoutes);
 app.use('/api/templates', templatesRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/relatorios', relatoriosRoutes);
+app.use('/api/relatorios', relatoriosRoutes); // Sistema antigo (upload de PDFs)
 app.use('/api/test-evolution', testEvolutionRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/system', systemRoutes);
+
+// 🆕 Sistema de Relatórios V2 (VETRIC Reports)
+app.use('/api/vetric-reports', vetricReportsRoutes);
 
 // Rota de health check
 app.get('/health', (req, res) => {

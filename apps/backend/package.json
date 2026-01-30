@@ -30,7 +30,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^2.0.0",
-    "@types/node": "^20.11.5",
+    "@types/node": "^20.19.30",
     "@types/pg": "^8.16.0",
     "@types/ws": "^8.5.10",
     "axios": "^1.6.5",
@@ -50,7 +50,8 @@
     "socket.io": "^4.6.1",
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
