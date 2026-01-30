@@ -16,6 +16,14 @@ import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 
+// 🆕 VETRIC Reports V2
+import { EmpreendimentosRelatorios } from "./pages/relatorios-vetric/EmpreendimentosRelatorios";
+import { NovoEmpreendimento } from "./pages/relatorios-vetric/NovoEmpreendimento";
+import { DashboardEmpreendimento } from "./pages/relatorios-vetric/DashboardEmpreendimento";
+import { UploadRelatorio } from "./pages/relatorios-vetric/UploadRelatorio";
+import { ListaRelatorios } from "./pages/relatorios-vetric/ListaRelatorios";
+import { VisualizarRelatorio } from "./pages/relatorios-vetric/VisualizarRelatorio";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -63,6 +71,38 @@ const App = () => (
             <Route path="/perfil" element={
               <PrivateRoute>
                 <Perfil />
+              </PrivateRoute>
+            } />
+
+            {/* 🆕 VETRIC Reports V2 - Módulo de Relatórios */}
+            <Route path="/relatorios-vetric" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <EmpreendimentosRelatorios />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/novo" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <NovoEmpreendimento />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:id" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <DashboardEmpreendimento />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:id/upload" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <UploadRelatorio />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:id/relatorios" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <ListaRelatorios />
+              </PrivateRoute>
+            } />
+            <Route path="/relatorios-vetric/:id/relatorios/:relatorioId" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <VisualizarRelatorio />
               </PrivateRoute>
             } />
             

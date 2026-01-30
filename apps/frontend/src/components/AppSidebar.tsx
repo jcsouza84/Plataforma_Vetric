@@ -7,7 +7,8 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  Menu
+  Menu,
+  FileBarChart
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,6 +20,7 @@ const menuItems = [
   { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'CLIENTE'] },
   { title: 'Relatórios', path: '/relatorios', icon: FileText, roles: ['ADMIN', 'CLIENTE'] },
   { title: 'Consumo', path: '/consumo', icon: BarChart3, roles: ['ADMIN', 'CLIENTE'] },
+  { title: 'Relatórios VETRIC', path: '/relatorios-vetric', icon: FileBarChart, roles: ['ADMIN'] },
   { title: 'Usuários', path: '/usuarios', icon: Users, roles: ['ADMIN'] },
   { title: 'Configurações', path: '/configuracoes', icon: Settings, roles: ['ADMIN'] },
   { title: 'Perfil', path: '/perfil', icon: User, roles: ['ADMIN', 'CLIENTE'] },
