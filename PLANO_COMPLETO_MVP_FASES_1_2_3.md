@@ -769,3 +769,5 @@ Março-Abril 2026
 _Última atualização: 12 de Janeiro de 2026_  
 _Desenvolvido com ❤️ pela equipe VETRIC_
 
+
+

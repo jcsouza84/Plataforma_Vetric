@@ -206,3 +206,5 @@ Todos os aspectos estão documentados:
 **Última atualização:** Janeiro 2026  
 **Mantido por:** Equipe VETRIC
 
+
+

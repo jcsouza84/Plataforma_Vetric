@@ -556,3 +556,5 @@ await whatsapp.sendText(
 **🎯 Tudo está pronto. Bora integrar!** 🚀
 
 
+
+

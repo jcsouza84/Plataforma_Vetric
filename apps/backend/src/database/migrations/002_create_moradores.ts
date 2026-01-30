@@ -35,3 +35,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '002_create_moradores';
 export const description = 'Criar tabela de moradores do condomínio';
 
+
+

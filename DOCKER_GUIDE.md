@@ -576,3 +576,5 @@ docker system prune -a               # Limpeza completa
 
 **Próximo:** Testar localmente e depois fazer deploy na VPS!
 
+
+

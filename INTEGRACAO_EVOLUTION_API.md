@@ -564,3 +564,5 @@ _Documentação criada em: 12/01/2026_
 _Última atualização: 12/01/2026_  
 _VETRIC - CVE Dashboard_
 
+
+

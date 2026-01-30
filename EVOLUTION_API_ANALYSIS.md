@@ -810,3 +810,5 @@ await sendTextMessage(
 **Status:** ✅ Pronto para Integração
 
 
+
+

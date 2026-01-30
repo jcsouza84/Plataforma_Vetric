@@ -92,3 +92,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '004_create_templates_notificacao';
 export const description = 'Criar tabela de templates de notificação WhatsApp';
 
+
+

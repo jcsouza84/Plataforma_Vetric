@@ -166,6 +166,9 @@ export class PollingService {
             }
           } else {
             console.log(`⚠️  [Polling] Carregador ${charger.description} ativo mas sem idTag identificável`);
+            console.log(`   📊 Status: ${status}`);
+            console.log(`   🔍 Connector lastStatus:`, JSON.stringify(connector.lastStatus, null, 2));
+            console.log(`   🎯 idTag no connector:`, connector.lastStatus?.idTag || 'N/A');
           }
         } 
         // CASO 2: Carregador ESTÁ DISPONÍVEL - Finalizar carregamentos ativos

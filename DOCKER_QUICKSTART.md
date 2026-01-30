@@ -205,3 +205,5 @@ O sistema Docker está pronto para deploy em VPS!
 
 **Sistema VETRIC rodando com Docker! 🐳🎉**
 
+
+

@@ -532,3 +532,5 @@ Se o problema persistir:
 _Última atualização: 12 de Janeiro de 2026_  
 _Versão: 1.0.0_
 
+
+

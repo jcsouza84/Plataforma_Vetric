@@ -44,3 +44,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '007_create_configuracoes_sistema';
 export const description = 'Criar tabela de configurações do sistema';
 
+
+

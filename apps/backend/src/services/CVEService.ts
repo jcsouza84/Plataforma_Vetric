@@ -207,7 +207,10 @@ export class CVEService {
       };
       
       const fromDate = formatDate(thirtyDaysAgo);
-      const toDate = formatDate(now);
+      // FIX: API CVE-PRO não respeita hora no toDate, adicionar +1 dia
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const toDate = formatDate(tomorrow);
       
       console.log(`🔍 [CVE] Buscando ocppIdTag para ocppTagPk ${ocppTagPk} no histórico...`);
       
@@ -293,9 +296,12 @@ export class CVEService {
     const startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     
-    // Final do dia: hoje às 23:59:59
+    // FIX: API CVE-PRO não respeita hora no toDate, então sempre adicionar +2 dias
+    // Exemplo: Para buscar transações de hoje completo (incluindo as de amanhã cedo), 
+    // precisa colocar +2 dias no toDate
     const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
+    endOfDay.setDate(endOfDay.getDate() + 2); // +2 dias para pegar todo hoje e amanhã
+    endOfDay.setHours(0, 0, 0, 0); // meia-noite
     
     // Formato com ESPAÇO: "2026-01-11 00:00:00"
     const formatDate = (date: Date): string => {

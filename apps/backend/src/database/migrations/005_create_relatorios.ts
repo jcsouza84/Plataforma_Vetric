@@ -37,3 +37,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '005_create_relatorios';
 export const description = 'Criar tabela de relatórios mensais';
 
+
+

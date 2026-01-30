@@ -34,3 +34,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '001_create_usuarios';
 export const description = 'Criar tabela de usuários com autenticação JWT';
 
+
+

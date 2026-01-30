@@ -35,3 +35,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '008_create_tag_pk_mapping';
 export const description = 'Criar tabela de mapeamento ocppTagPk para moradores';
 
+
+

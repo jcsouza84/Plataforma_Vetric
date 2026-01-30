@@ -43,3 +43,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '003_create_carregamentos';
 export const description = 'Criar tabela de histórico de carregamentos';
 
+
+

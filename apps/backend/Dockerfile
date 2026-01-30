@@ -82,3 +82,5 @@ ENV NODE_ENV=production \
 # Comando para iniciar
 CMD ["node", "dist/index.js"]
 
+
+

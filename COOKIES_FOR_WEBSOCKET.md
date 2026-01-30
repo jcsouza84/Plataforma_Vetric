@@ -54,3 +54,5 @@ O WebSocket usa **cookies** para autenticação, não o token JWT no header Auth
 O token JWT serve para requisições HTTP/REST, mas o WebSocket precisa dos cookies de sessão!
 
 
+
+

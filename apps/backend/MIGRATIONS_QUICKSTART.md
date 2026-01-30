@@ -345,3 +345,5 @@ Ver: `apps/backend/src/database/README.md`
 **VETRIC Dashboard** 🔋⚡
 Sistema de Gerenciamento de Carregadores Elétricos
 
+
+

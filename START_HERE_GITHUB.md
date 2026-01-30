@@ -213,3 +213,5 @@ git commit -m "docs: atualiza FAQ de produção"
 
 **Dúvidas? Consulte [GIT_SETUP.md](./GIT_SETUP.md) para guia completo.**
 
+
+

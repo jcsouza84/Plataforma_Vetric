@@ -18,22 +18,29 @@
     "start": "node dist/index.js",
     "clean": "rm -rf dist logs/*.json logs/*.log"
   },
-  "keywords": ["cve-pro", "intelbras", "websocket", "stomp", "discovery"],
+  "keywords": [
+    "cve-pro",
+    "intelbras",
+    "websocket",
+    "stomp",
+    "discovery"
+  ],
   "author": "VETRIC",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.5",
     "@stomp/stompjs": "^7.0.0",
-    "ws": "^8.16.0",
-    "dotenv": "^16.3.1",
+    "@types/pg": "^8.16.0",
+    "axios": "^1.6.5",
     "chalk": "^4.1.2",
-    "winston": "^3.11.0"
+    "dotenv": "^16.3.1",
+    "pg": "^8.17.1",
+    "winston": "^3.11.0",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2",
     "@types/node": "^20.11.5",
-    "@types/ws": "^8.5.10"
+    "@types/ws": "^8.5.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }
-

@@ -36,3 +36,5 @@ export const down = async (pool: Pool): Promise<void> => {
 export const name = '006_create_logs_notificacoes';
 export const description = 'Criar tabela de logs de notificações enviadas';
 
+
+

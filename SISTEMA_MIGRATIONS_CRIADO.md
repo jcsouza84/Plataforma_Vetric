@@ -409,3 +409,5 @@ Sistema de Gerenciamento de Carregadores Elétricos
 
 *Sistema de migrations criado em 14/01/2026*
 
+
+
