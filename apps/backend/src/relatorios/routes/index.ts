@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { autenticarJWT } from '../../middleware/auth';
+import { authenticate } from '../../middleware/auth';
 import { EmpreendimentoRelatorioController } from '../controllers/EmpreendimentoRelatorioController';
 import { UsuarioRelatorioController } from '../controllers/UsuarioRelatorioController';
 import { ConfiguracaoTarifariaController } from '../controllers/ConfiguracaoTarifariaController';
@@ -13,7 +13,7 @@ import { RelatorioController, uploadMiddleware } from '../controllers/RelatorioC
 const router = Router();
 
 // 🔒 Todas as rotas exigem autenticação
-router.use(autenticarJWT);
+router.use(authenticate);
 
 // =====================================
 // 🏢 EMPREENDIMENTOS
