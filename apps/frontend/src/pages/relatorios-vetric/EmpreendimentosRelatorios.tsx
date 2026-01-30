@@ -30,17 +30,48 @@ export function EmpreendimentosRelatorios() {
 
   const fetchEmpreendimentos = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('@vetric:token');
+      
+      if (!token) {
+        toast({
+          title: 'Sessão expirada',
+          description: 'Por favor, faça login novamente',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('http://localhost:3001/api/vetric-reports/empreendimentos', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setEmpreendimentos(data);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Erro desconhecido' }));
+        console.error('Erro da API:', errorData);
+        
+        if (response.status === 401) {
+          toast({
+            title: 'Sessão expirada',
+            description: 'Por favor, faça login novamente',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Erro ao carregar',
+            description: errorData.message || 'Não foi possível carregar os empreendimentos',
+            variant: 'destructive',
+          });
+        }
+        return;
       }
+
+      const data = await response.json();
+      console.log('Empreendimentos carregados:', data);
+      setEmpreendimentos(data);
     } catch (error) {
       console.error('Erro ao carregar empreendimentos:', error);
       toast({

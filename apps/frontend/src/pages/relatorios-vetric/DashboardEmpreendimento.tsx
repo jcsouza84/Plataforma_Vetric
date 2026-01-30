@@ -39,7 +39,7 @@ export function DashboardEmpreendimento() {
 
   const fetchEmpreendimento = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('@vetric:token');
       const response = await fetch(`http://localhost:3001/api/vetric-reports/empreendimentos/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,

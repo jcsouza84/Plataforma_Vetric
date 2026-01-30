@@ -43,7 +43,7 @@ export function UploadRelatorio() {
       formData.append('file', file);
       formData.append('empreendimentoId', id!);
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('@vetric:token');
       const response = await fetch('http://localhost:3001/api/vetric-reports/preview-xlsx', {
         method: 'POST',
         headers: {
@@ -84,7 +84,7 @@ export function UploadRelatorio() {
       formData.append('file', file);
       formData.append('empreendimentoId', id!);
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('@vetric:token');
       const response = await fetch('http://localhost:3001/api/vetric-reports/gerar-relatorio', {
         method: 'POST',
         headers: {

@@ -30,7 +30,7 @@ export function ListaRelatorios() {
 
   const fetchRelatorios = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('@vetric:token');
       const response = await fetch(
         `http://localhost:3001/api/vetric-reports/empreendimentos/${id}/relatorios`,
         {
