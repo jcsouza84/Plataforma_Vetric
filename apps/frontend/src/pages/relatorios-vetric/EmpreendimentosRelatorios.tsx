@@ -31,7 +31,7 @@ export function EmpreendimentosRelatorios() {
   const fetchEmpreendimentos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/vetric-reports/empreendimentos', {
+      const response = await fetch('http://localhost:3001/api/vetric-reports/empreendimentos', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
