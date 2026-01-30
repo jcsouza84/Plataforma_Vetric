@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface Empreendimento {
   id: string;
@@ -114,6 +115,7 @@ export function DashboardEmpreendimento() {
   ];
 
   return (
+    <DashboardLayout>
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
@@ -193,6 +195,7 @@ export function DashboardEmpreendimento() {
         ))}
       </div>
     </div>
+    </DashboardLayout>
   );
 }
 

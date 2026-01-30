@@ -8,6 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2, Download, BarChart3, DollarSign, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface DadosRelatorio {
   mesAno: string;
@@ -102,6 +103,7 @@ export function VisualizarRelatorio() {
   }
 
   return (
+    <DashboardLayout>
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
@@ -227,6 +229,7 @@ export function VisualizarRelatorio() {
         </p>
       </div>
     </div>
+    </DashboardLayout>
   );
 }
 

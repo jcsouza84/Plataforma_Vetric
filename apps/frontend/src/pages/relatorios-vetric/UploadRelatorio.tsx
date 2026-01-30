@@ -7,6 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Upload, FileText, ArrowLeft, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 export function UploadRelatorio() {
   const { id } = useParams();
@@ -121,6 +122,7 @@ export function UploadRelatorio() {
   };
 
   return (
+    <DashboardLayout>
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
@@ -304,6 +306,7 @@ export function UploadRelatorio() {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 }
 

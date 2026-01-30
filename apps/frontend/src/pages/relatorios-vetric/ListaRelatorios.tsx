@@ -7,6 +7,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FileText, ArrowLeft, Loader2, Eye, Calendar, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface Relatorio {
   id: string;
@@ -65,6 +66,7 @@ export function ListaRelatorios() {
   }
 
   return (
+    <DashboardLayout>
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
@@ -169,6 +171,7 @@ export function ListaRelatorios() {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 }
 

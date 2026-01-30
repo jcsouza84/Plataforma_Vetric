@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 export function NovoEmpreendimento() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export function NovoEmpreendimento() {
   };
 
   return (
+    <DashboardLayout>
     <div className="p-6 max-w-2xl mx-auto">
       {/* Header */}
       <div className="mb-8">
@@ -170,6 +172,7 @@ export function NovoEmpreendimento() {
         </div>
       </form>
     </div>
+    </DashboardLayout>
   );
 }
 

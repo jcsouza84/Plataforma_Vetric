@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface ConfiguracaoTarifaria {
   id: string;
@@ -155,6 +156,7 @@ export default function ConfiguracoesRelatorio() {
   }
 
   return (
+    <DashboardLayout>
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
@@ -367,6 +369,7 @@ export default function ConfiguracoesRelatorio() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   );
 }
 

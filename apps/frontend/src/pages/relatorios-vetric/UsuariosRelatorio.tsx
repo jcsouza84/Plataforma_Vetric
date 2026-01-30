@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface UsuarioRelatorio {
   id: string;
@@ -195,6 +196,7 @@ export default function UsuariosRelatorio() {
   }
 
   return (
+    <DashboardLayout>
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
@@ -361,6 +363,7 @@ export default function UsuariosRelatorio() {
         </DialogContent>
       </Dialog>
     </div>
+    </DashboardLayout>
   );
 }
 

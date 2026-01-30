@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { Building2, Plus, ArrowRight, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 
 interface EmpreendimentoRelatorio {
   id: string;
@@ -86,17 +87,20 @@ export function EmpreendimentosRelatorios() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-          <span className="text-gray-700 font-medium">Carregando empreendimentos...</span>
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="flex items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+            <span className="text-gray-700 font-medium">Carregando empreendimentos...</span>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="p-6">
+    <DashboardLayout>
+      <div>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -183,7 +187,8 @@ export function EmpreendimentosRelatorios() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 
