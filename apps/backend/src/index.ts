@@ -59,7 +59,9 @@ app.use(cors(corsOptions));
 // Rate Limiting: Prevenir ataques DDoS
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 min
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // 100 requisições
+  max: process.env.NODE_ENV === 'production' 
+    ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100')
+    : 1000, // Desenvolvimento: 1000 requisições, Produção: 100
   message: {
     success: false,
     message: 'Muitas requisições. Tente novamente em alguns minutos.',
