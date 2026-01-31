@@ -29,21 +29,49 @@ export interface CreateRelatorioGeradoDTO {
 export class RelatorioGeradoModel {
   static async findAll(): Promise<RelatorioGerado[]> {
     const sql = `
-      SELECT * FROM relatorios_gerados 
+      SELECT 
+        id, 
+        empreendimento_id, 
+        mes_ano, 
+        pdf_url, 
+        total_recargas, 
+        total_consumo, 
+        total_valor, 
+        criado_em
+      FROM relatorios_gerados 
       ORDER BY criado_em DESC
     `;
     const result = await query(sql);
-    return result.map(this.parseJsonFields);
+    // Converter DECIMAL para número
+    return result.map(row => ({
+      ...row,
+      total_consumo: parseFloat(row.total_consumo),
+      total_valor: parseFloat(row.total_valor),
+    }));
   }
 
   static async findByEmpreendimento(empreendimentoId: string): Promise<RelatorioGerado[]> {
     const sql = `
-      SELECT * FROM relatorios_gerados 
+      SELECT 
+        id, 
+        empreendimento_id, 
+        mes_ano, 
+        pdf_url, 
+        total_recargas, 
+        total_consumo, 
+        total_valor, 
+        criado_em
+      FROM relatorios_gerados 
       WHERE empreendimento_id = $1
       ORDER BY criado_em DESC
     `;
     const result = await query(sql, [empreendimentoId]);
-    return result.map(this.parseJsonFields);
+    // Converter DECIMAL para número
+    return result.map(row => ({
+      ...row,
+      total_consumo: parseFloat(row.total_consumo),
+      total_valor: parseFloat(row.total_valor),
+    }));
   }
 
   static async findById(id: string): Promise<RelatorioGerado | null> {

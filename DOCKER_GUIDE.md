@@ -578,3 +578,5 @@ docker system prune -a               # Limpeza completa
 
 
 
+
+

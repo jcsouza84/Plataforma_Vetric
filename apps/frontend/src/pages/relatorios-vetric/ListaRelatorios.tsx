@@ -150,13 +150,13 @@ export function ListaRelatorios() {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Consumo:</span>
                     <span className="font-semibold text-gray-900">
-                      {relatorio.total_consumo.toFixed(2)} kWh
+                      {Number(relatorio.total_consumo).toFixed(2)} kWh
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Valor Total:</span>
                     <span className="font-semibold text-green-600">
-                      R$ {relatorio.total_valor.toFixed(2)}
+                      R$ {Number(relatorio.total_valor).toFixed(2)}
                     </span>
                   </div>
                 </div>

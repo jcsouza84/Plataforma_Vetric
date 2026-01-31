@@ -1,0 +1,31 @@
+====================================================
+🔍 MENSAGENS DA TRANSAÇÃO 439071 - SASKYA LORENA
+====================================================
+Carregador: Gran Marine 6 (JDBM1200040BB)
+Data: 30/01/2026 20:45 - 22:35
+Duração: 1h50min
+Energia: 11,4 kWh
+====================================================
+
+
+=== MENSAGENS COM TRANSACTION ID 439071 ===
+
+
+=== MENSAGENS COM 'SASKYA' ===
+
+
+=== MENSAGENS DO GRAN MARINE 6 EM 30/01/2026 ===
+
+
+=== MENSAGENS ENTRE 20:00 E 23:00 ===
+
+
+=====================================================
+RESUMO
+=====================================================
+Total de mensagens encontradas:
+  - Por Transaction ID (439071):        0
+  - Por nome (saskya):        0
+  - Gran Marine 6 em 30/01:        0
+  - Horário 20:00-23:00:        0
+=====================================================

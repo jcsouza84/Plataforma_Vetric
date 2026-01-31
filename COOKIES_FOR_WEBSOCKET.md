@@ -56,3 +56,5 @@ O token JWT serve para requisições HTTP/REST, mas o WebSocket precisa dos cook
 
 
 
+
+
