@@ -24,7 +24,8 @@
     "**/*.test.ts",
     "**/*test*.ts",
     "test-*.ts",
-    "create-test-*.ts"
+    "create-test-*.ts",
+    "src/relatorios/**/*"
   ]
 }
 
