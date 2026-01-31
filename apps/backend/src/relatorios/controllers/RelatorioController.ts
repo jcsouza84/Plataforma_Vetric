@@ -94,9 +94,17 @@ export class RelatorioController {
           });
         } else {
           // Calcular tarifas
-          const resultadoJanelas = calcularJanelas(carga.intervalo, carga.energia, config);
-          const energiaPonta = resultadoJanelas.energiaPonta || 0;
-          const energiaForaPonta = resultadoJanelas.energiaForaPonta || 0;
+          const janelas = calcularJanelas(carga.intervalo, carga.energia, config);
+          
+          // Somar energia de ponta e fora ponta do array de janelas
+          const energiaPonta = janelas
+            .filter(j => j.janela === 'Ponta')
+            .reduce((sum, j) => sum + j.energiaKWh, 0);
+          
+          const energiaForaPonta = janelas
+            .filter(j => j.janela === 'Fora Ponta')
+            .reduce((sum, j) => sum + j.energiaKWh, 0);
+          
           const valorPonta = energiaPonta * config.tarifa_ponta;
           const valorForaPonta = energiaForaPonta * config.tarifa_fora_ponta;
           const valorTotal = valorPonta + valorForaPonta;
@@ -109,7 +117,7 @@ export class RelatorioController {
             valorPonta,
             valorForaPonta,
             valorTotal,
-            janelas: resultadoJanelas.janelas,
+            janelas,
           });
         }
       });
@@ -141,12 +149,12 @@ export class RelatorioController {
         .sort((a, b) => b.consumo - a.consumo);
 
       // Processar ociosidade
-      const resultadoOciosidade = processarOciosidade(
+      const dadosOciosidade = processarOciosidade(
         cargasProcessadas,
         config.limite_ociosidade_min
       );
-      const totalOcorrencias = resultadoOciosidade.totalOcorrencias || 0;
-      const tempoTotalOcioso = resultadoOciosidade.tempoTotalOcioso || 0;
+      const totalOcorrencias = dadosOciosidade.ocorrencias || 0;
+      const tempoTotalOcioso = dadosOciosidade.tempoTotalMinutos || 0;
 
       // Resumo por usuário
       const usuariosMap = new Map<string, any>();
