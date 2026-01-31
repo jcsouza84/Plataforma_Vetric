@@ -94,9 +94,9 @@ export class RelatorioController {
           });
         } else {
           // Calcular tarifas
-          const janelas = calcularJanelas(carga.intervalo, carga.energia, config);
-          const energiaPonta = janelas.ponta;
-          const energiaForaPonta = janelas.foraPonta;
+          const resultadoJanelas = calcularJanelas(carga.intervalo, carga.energia, config);
+          const energiaPonta = resultadoJanelas.energiaPonta || 0;
+          const energiaForaPonta = resultadoJanelas.energiaForaPonta || 0;
           const valorPonta = energiaPonta * config.tarifa_ponta;
           const valorForaPonta = energiaForaPonta * config.tarifa_fora_ponta;
           const valorTotal = valorPonta + valorForaPonta;
@@ -109,7 +109,7 @@ export class RelatorioController {
             valorPonta,
             valorForaPonta,
             valorTotal,
-            janelas,
+            janelas: resultadoJanelas.janelas,
           });
         }
       });
@@ -141,10 +141,12 @@ export class RelatorioController {
         .sort((a, b) => b.consumo - a.consumo);
 
       // Processar ociosidade
-      const { totalOcorrencias, tempoTotalOcioso } = processarOciosidade(
+      const resultadoOciosidade = processarOciosidade(
         cargasProcessadas,
         config.limite_ociosidade_min
       );
+      const totalOcorrencias = resultadoOciosidade.totalOcorrencias || 0;
+      const tempoTotalOcioso = resultadoOciosidade.tempoTotalOcioso || 0;
 
       // Resumo por usuário
       const usuariosMap = new Map<string, any>();
