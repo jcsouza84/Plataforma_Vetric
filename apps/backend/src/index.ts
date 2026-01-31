@@ -26,7 +26,8 @@ import configRoutes from './routes/config';
 import systemRoutes from './routes/system';
 
 // 🆕 Sistema de Relatórios V2 (VETRIC Reports)
-import vetricReportsRoutes from './relatorios/routes';
+// ⚠️ TEMPORARIAMENTE DESATIVADO - Focar em notificações primeiro
+// import vetricReportsRoutes from './relatorios/routes';
 
 dotenv.config();
 
@@ -119,7 +120,8 @@ app.use('/api/config', configRoutes);
 app.use('/api/system', systemRoutes);
 
 // 🆕 Sistema de Relatórios V2 (VETRIC Reports)
-app.use('/api/vetric-reports', vetricReportsRoutes);
+// ⚠️ TEMPORARIAMENTE DESATIVADO - Focar em notificações primeiro
+// app.use('/api/vetric-reports', vetricReportsRoutes);
 
 // Rota de health check
 app.get('/health', (req, res) => {
