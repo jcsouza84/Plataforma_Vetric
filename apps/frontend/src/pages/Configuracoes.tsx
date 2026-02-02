@@ -205,44 +205,38 @@ export default function Configuracoes() {
 
   const templateInfo = {
     inicio: {
-      title: '🔋 Início de Carregamento',
-      description: 'Enviado quando o carregamento é iniciado',
+      title: '🔋 Início de Recarga',
+      description: 'Enviado IMEDIATAMENTE quando o carregamento é iniciado (StartTransaction)',
       variables: ['{{nome}}', '{{charger}}', '{{localizacao}}', '{{data}}', '{{apartamento}}'],
+      hasTempo: false,
+      hasThreshold: false,
     },
     inicio_ociosidade: {
       title: '⚠️ Início de Ociosidade',
       description: 'Enviado IMEDIATAMENTE quando a potência cai abaixo do threshold (bateria pode estar cheia)',
       variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{data}}'],
+      hasTempo: false,
+      hasThreshold: true,
+      thresholdLabel: 'Potência mínima (W)',
+      thresholdHelp: 'Detecta quando power cai abaixo deste valor (ex: 10W)',
     },
     bateria_cheia: {
       title: '🔋 Bateria Cheia',
-      description: 'Enviado após X minutos com potência baixa (confirma que bateria está carregada)',
+      description: 'Enviado APÓS X MINUTOS com potência baixa (confirma que bateria está carregada)',
       variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}'],
+      hasTempo: true,
+      hasThreshold: true,
+      tempoLabel: 'Tempo de espera (minutos)',
+      tempoHelp: 'Aguarda X minutos em baixa potência antes de enviar (ex: 3 min)',
+      thresholdLabel: 'Potência mínima (W)',
+      thresholdHelp: 'Considera que está ocioso se power ≤ este valor (ex: 10W)',
     },
     interrupcao: {
       title: '⚠️ Interrupção',
-      description: 'Enviado quando o carregamento é interrompido inesperadamente',
+      description: 'Enviado IMEDIATAMENTE quando o carregamento para inesperadamente (não foi fim normal)',
       variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}'],
-    },
-    fim: {
-      title: '✅ Fim de Carregamento',
-      description: 'Enviado quando o carregamento é concluído',
-      variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}', '{{custo}}'],
-    },
-    erro: {
-      title: '⚠️ Erro no Carregamento',
-      description: 'Enviado quando ocorre um erro',
-      variables: ['{{nome}}', '{{charger}}', '{{erro}}', '{{data}}', '{{apartamento}}'],
-    },
-    ocioso: {
-      title: '💤 Carregador Ocioso',
-      description: 'Enviado quando o carregador fica ocioso por muito tempo',
-      variables: ['{{nome}}', '{{charger}}', '{{localizacao}}', '{{tempo}}'],
-    },
-    disponivel: {
-      title: '✨ Carregador Disponível',
-      description: 'Enviado quando um carregador fica disponível',
-      variables: ['{{nome}}', '{{charger}}', '{{localizacao}}', '{{apartamento}}'],
+      hasTempo: false,
+      hasThreshold: false,
     },
   };
 
@@ -303,7 +297,7 @@ export default function Configuracoes() {
                               [template.tipo]: { ...currentData, ativo: checked },
                             });
                           } else {
-                            handleEditTemplate(template.tipo, template.mensagem, checked);
+                            handleEditTemplate(template.tipo, { ...template, ativo: checked });
                             handleSaveTemplate(template.tipo);
                           }
                         }}
@@ -353,6 +347,81 @@ export default function Configuracoes() {
                       )}
                     </div>
 
+                    {/* Campos Avançados (tempo_minutos e power_threshold_w) */}
+                    {(info?.hasTempo || info?.hasThreshold) && (
+                      <div className="grid gap-4 md:grid-cols-2">
+                        {/* Tempo de Espera */}
+                        {info?.hasTempo && (
+                          <div className="space-y-2">
+                            <Label htmlFor={`tempo-${template.tipo}`}>
+                              {info.tempoLabel}
+                            </Label>
+                            {isEditing ? (
+                              <Input
+                                id={`tempo-${template.tipo}`}
+                                type="number"
+                                min="0"
+                                max="1440"
+                                value={currentData.tempo_minutos || 0}
+                                onChange={(e) =>
+                                  setTemplateData({
+                                    ...templateData,
+                                    [template.tipo]: {
+                                      ...currentData,
+                                      tempo_minutos: parseInt(e.target.value) || 0,
+                                    },
+                                  })
+                                }
+                                className="font-mono"
+                              />
+                            ) : (
+                              <div className="p-2 bg-muted rounded text-sm font-mono">
+                                {template.tempo_minutos || 0} minutos
+                              </div>
+                            )}
+                            <p className="text-xs text-muted-foreground">
+                              {info.tempoHelp}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Threshold de Potência */}
+                        {info?.hasThreshold && (
+                          <div className="space-y-2">
+                            <Label htmlFor={`threshold-${template.tipo}`}>
+                              {info.thresholdLabel}
+                            </Label>
+                            {isEditing ? (
+                              <Input
+                                id={`threshold-${template.tipo}`}
+                                type="number"
+                                min="0"
+                                max="50000"
+                                value={currentData.power_threshold_w || 0}
+                                onChange={(e) =>
+                                  setTemplateData({
+                                    ...templateData,
+                                    [template.tipo]: {
+                                      ...currentData,
+                                      power_threshold_w: parseInt(e.target.value) || null,
+                                    },
+                                  })
+                                }
+                                className="font-mono"
+                              />
+                            ) : (
+                              <div className="p-2 bg-muted rounded text-sm font-mono">
+                                {template.power_threshold_w || 0} W
+                              </div>
+                            )}
+                            <p className="text-xs text-muted-foreground">
+                              {info.thresholdHelp}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Botões */}
                     <div className="flex gap-2">
                       {isEditing ? (
@@ -385,13 +454,7 @@ export default function Configuracoes() {
                       ) : (
                         <Button
                           variant="outline"
-                          onClick={() =>
-                            handleEditTemplate(
-                              template.tipo,
-                              template.mensagem,
-                              template.ativo
-                            )
-                          }
+                          onClick={() => handleEditTemplate(template.tipo, template)}
                         >
                           Editar Template
                         </Button>
