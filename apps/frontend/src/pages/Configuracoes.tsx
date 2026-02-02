@@ -27,7 +27,14 @@ export default function Configuracoes() {
   const updateConfiguracoesMutation = useUpdateConfiguracoes();
 
   const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
-  const [templateData, setTemplateData] = useState<{ [key: string]: { mensagem: string; ativo: boolean } }>({});
+  const [templateData, setTemplateData] = useState<{ 
+    [key: string]: { 
+      mensagem: string; 
+      ativo: boolean;
+      tempo_minutos?: number;
+      power_threshold_w?: number;
+    } 
+  }>({});
   
   // Estado para teste Evolution API
   const [testPhone, setTestPhone] = useState('5582996176797');
@@ -59,11 +66,16 @@ export default function Configuracoes() {
     }
   }, [configuracoes]);
 
-  const handleEditTemplate = (tipo: string, mensagem: string, ativo: boolean) => {
+  const handleEditTemplate = (tipo: string, template: any) => {
     setEditingTemplate(tipo);
     setTemplateData({
       ...templateData,
-      [tipo]: { mensagem, ativo },
+      [tipo]: { 
+        mensagem: template.mensagem, 
+        ativo: template.ativo,
+        tempo_minutos: template.tempo_minutos || 0,
+        power_threshold_w: template.power_threshold_w || null,
+      },
     });
   };
 
