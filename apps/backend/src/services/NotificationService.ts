@@ -231,7 +231,7 @@ export class NotificationService {
    * 🔔 Notificação: Início de Carregamento
    */
   async notificarInicio(moradorId: number, chargerNome: string, localizacao: string) {
-    return await this.enviarNotificacao('inicio', moradorId, {
+    return await this.enviarNotificacao('inicio_recarga', moradorId, {
       charger: chargerNome,
       localizacao,
       data: new Date().toLocaleString('pt-BR'),
@@ -239,7 +239,7 @@ export class NotificationService {
   }
 
   /**
-   * ✅ Notificação: Fim de Carregamento
+   * ✅ Notificação: Fim de Carregamento (DEPRECATED)
    */
   async notificarFim(
     moradorId: number,
@@ -248,48 +248,77 @@ export class NotificationService {
     duracao: string,
     custo: number
   ) {
-    return await this.enviarNotificacao('fim', moradorId, {
-      charger: chargerNome,
-      energia: energia.toFixed(1),
-      duracao,
-      custo: custo.toFixed(2),
-    });
+    // DEPRECATED: Use notificarBateriaCheia() ou notificarInterrupcao()
+    console.warn('⚠️ notificarFim() está deprecated. Use notificarBateriaCheia() ou notificarInterrupcao().');
+    return false;
   }
 
   /**
-   * ⚠️ Notificação: Erro Detectado
+   * ⚠️ Notificação: Erro Detectado (DEPRECATED)
    */
   async notificarErro(moradorId: number, chargerNome: string, erro: string) {
-    return await this.enviarNotificacao('erro', moradorId, {
+    // DEPRECATED: Não há template correspondente no novo sistema
+    console.warn('⚠️ notificarErro() está deprecated. Use notificarInterrupcao() se aplicável.');
+    return false;
+  }
+
+  /**
+   * 💤 Notificação: Início de Ociosidade
+   */
+  async notificarOciosidade(moradorId: number, chargerNome: string, energiaConsumida: string) {
+    return await this.enviarNotificacao('inicio_ociosidade', moradorId, {
       charger: chargerNome,
-      erro,
+      energia: energiaConsumida,
       data: new Date().toLocaleString('pt-BR'),
     });
   }
 
   /**
-   * 💤 Notificação: Carregador Ocioso
+   * 🔋 Notificação: Bateria Cheia
    */
-  async notificarOcioso(moradorId: number, chargerNome: string, tempoMinutos: number) {
-    const horas = Math.floor(tempoMinutos / 60);
-    const minutos = tempoMinutos % 60;
-    const tempo = `${horas}h ${minutos}min`;
+  async notificarBateriaCheia(moradorId: number, chargerNome: string, energiaConsumida: string, duracaoMinutos: number) {
+    const horas = Math.floor(duracaoMinutos / 60);
+    const minutos = duracaoMinutos % 60;
+    const duracao = `${horas}h ${minutos}min`;
 
-    return await this.enviarNotificacao('ocioso', moradorId, {
+    return await this.enviarNotificacao('bateria_cheia', moradorId, {
       charger: chargerNome,
-      localizacao: 'Garagem - Gran Marine',
-      tempo,
+      energia: energiaConsumida,
+      duracao,
     });
   }
 
   /**
-   * ✨ Notificação: Carregador Disponível
+   * ⚠️ Notificação: Interrupção de Carregamento
+   */
+  async notificarInterrupcao(moradorId: number, chargerNome: string, energiaConsumida: string, duracaoMinutos: number) {
+    const horas = Math.floor(duracaoMinutos / 60);
+    const minutos = duracaoMinutos % 60;
+    const duracao = `${horas}h ${minutos}min`;
+
+    return await this.enviarNotificacao('interrupcao', moradorId, {
+      charger: chargerNome,
+      energia: energiaConsumida,
+      duracao,
+    });
+  }
+
+  /**
+   * 💤 Notificação: Ocioso (DEPRECATED - alias para notificarOciosidade)
+   */
+  async notificarOcioso(moradorId: number, chargerNome: string, tempoMinutos: number) {
+    // Alias para compatibilidade - chama o novo método
+    console.warn('⚠️ notificarOcioso() está deprecated. Use notificarOciosidade().');
+    return await this.notificarOciosidade(moradorId, chargerNome, '0.0');
+  }
+
+  /**
+   * ✨ Notificação: Carregador Disponível (DEPRECATED - mantido para compatibilidade)
    */
   async notificarDisponivel(moradorId: number, chargerNome: string) {
-    return await this.enviarNotificacao('disponivel', moradorId, {
-      charger: chargerNome,
-      localizacao: 'Garagem - Gran Marine',
-    });
+    // Este método foi deprecated, mas mantido para não quebrar código existente
+    console.warn('⚠️ notificarDisponivel() está deprecated. Use os 4 novos tipos de notificação.');
+    return false;
   }
 
   /**
