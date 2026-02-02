@@ -325,8 +325,193 @@ export class PollingService {
       // Registrar transação como conhecida
       this.transacoesConhecidas.set(String(transactionId), carregamentoId);
 
+      // 🆕 MONITORAR EVENTOS (ociosidade, bateria cheia, interrupção)
+      if (moradorId && morador && morador.notificacoes_ativas) {
+        await this.monitorarEventosCarregamento(carregamentoId, transacao);
+      }
+
     } catch (error: any) {
       console.error('❌ [Polling] Erro ao processar transação:', error.message);
+    }
+  }
+
+  /**
+   * 🆕 Monitorar eventos inteligentes de carregamento
+   * Detecta: ociosidade, bateria cheia, interrupção
+   */
+  private async monitorarEventosCarregamento(
+    carregamentoId: number,
+    transacao: CVETransaction
+  ): Promise<void> {
+    try {
+      const { query } = await import('../config/database');
+      
+      // Buscar carregamento atual com flags de notificação
+      const result = await query(
+        `SELECT * FROM carregamentos WHERE id = $1`,
+        [carregamentoId]
+      );
+      
+      if (result.length === 0) return;
+      const carregamento = result[0];
+      
+      // Extrair potência atual dos MeterValues (se disponível)
+      const powerAtual = this.extrairPotencia(transacao);
+      
+      if (powerAtual === null) {
+        // Sem dados de potência, não pode monitorar
+        return;
+      }
+      
+      // Buscar configurações dos templates
+      const templates = await query(
+        `SELECT tipo, tempo_minutos, power_threshold_w, ativo 
+         FROM templates_notificacao 
+         WHERE tipo IN ('inicio_ociosidade', 'bateria_cheia')
+           AND ativo = true`
+      );
+      
+      const configOciosidade = templates.find((t: any) => t.tipo === 'inicio_ociosidade');
+      const configBateria = templates.find((t: any) => t.tipo === 'bateria_cheia');
+      
+      if (!configOciosidade && !configBateria) {
+        // Nenhuma notificação de evento ativa
+        return;
+      }
+      
+      const threshold = configOciosidade?.power_threshold_w || 10; // Default 10W
+      
+      // ========================================
+      // CASO 2: INÍCIO DE OCIOSIDADE (IMEDIATO)
+      // ========================================
+      if (
+        configOciosidade &&
+        powerAtual <= threshold &&
+        carregamento.ultimo_power_w > threshold &&
+        !carregamento.notificacao_ociosidade_enviada
+      ) {
+        console.log(`⚠️  [Polling] Ociosidade detectada no carregamento ${carregamentoId}`);
+        console.log(`   Power atual: ${powerAtual}W | Threshold: ${threshold}W`);
+        
+        try {
+          const { notificationService } = await import('./NotificationService');
+          const morador = await MoradorModel.findById(carregamento.morador_id);
+          
+          if (morador) {
+            await notificationService.enviarNotificacao(
+              'inicio_ociosidade',
+              carregamento.morador_id,
+              {
+                charger: carregamento.charger_name,
+                energia: (transacao.energyKwh || 0).toFixed(2),
+                data: new Date().toLocaleString('pt-BR'),
+              }
+            );
+            
+            await query(
+              `UPDATE carregamentos 
+               SET notificacao_ociosidade_enviada = TRUE,
+                   primeiro_ocioso_em = NOW()
+               WHERE id = $1`,
+              [carregamentoId]
+            );
+            
+            console.log(`📱 [Polling] Notificação de ociosidade enviada`);
+          }
+        } catch (error) {
+          console.error('❌ [Polling] Erro ao enviar notificação de ociosidade:', error);
+        }
+      }
+      
+      // ========================================
+      // CASO 3: BATERIA CHEIA (após X minutos em 0W)
+      // ========================================
+      if (
+        configBateria &&
+        powerAtual <= threshold && 
+        carregamento.primeiro_ocioso_em &&
+        !carregamento.notificacao_bateria_cheia_enviada
+      ) {
+        const tempoEspera = configBateria.tempo_minutos || 3; // Default 3 min
+        const minutosOcioso = (
+          Date.now() - new Date(carregamento.primeiro_ocioso_em).getTime()
+        ) / 60000;
+        
+        if (minutosOcioso >= tempoEspera) {
+          console.log(`🔋 [Polling] Bateria cheia detectada no carregamento ${carregamentoId}`);
+          console.log(`   Tempo ocioso: ${minutosOcioso.toFixed(1)} min | Necessário: ${tempoEspera} min`);
+          
+          try {
+            const { notificationService } = await import('./NotificationService');
+            const morador = await MoradorModel.findById(carregamento.morador_id);
+            
+            if (morador) {
+              await notificationService.enviarNotificacao(
+                'bateria_cheia',
+                carregamento.morador_id,
+                {
+                  charger: carregamento.charger_name,
+                  energia: (transacao.energyKwh || 0).toFixed(2),
+                  duracao: transacao.durationHumanReadable || 'N/A',
+                }
+              );
+              
+              await query(
+                `UPDATE carregamentos 
+                 SET notificacao_bateria_cheia_enviada = TRUE
+                 WHERE id = $1`,
+                [carregamentoId]
+              );
+              
+              console.log(`📱 [Polling] Notificação de bateria cheia enviada`);
+            }
+          } catch (error) {
+            console.error('❌ [Polling] Erro ao enviar notificação de bateria cheia:', error);
+          }
+        }
+      }
+      
+      // Atualizar ultimo_power_w para próxima comparação
+      await query(
+        'UPDATE carregamentos SET ultimo_power_w = $1 WHERE id = $2',
+        [powerAtual, carregamentoId]
+      );
+      
+    } catch (error: any) {
+      console.error('❌ [Polling] Erro ao monitorar eventos:', error.message);
+    }
+  }
+
+  /**
+   * 🆕 Extrair potência (Power.Active.Import) dos MeterValues
+   */
+  private extrairPotencia(transacao: CVETransaction): number | null {
+    try {
+      // Tentar obter do campo direto (se a API retornar)
+      if (transacao.powerW !== undefined && transacao.powerW !== null) {
+        return transacao.powerW;
+      }
+      
+      // Tentar extrair de meterValues (formato comum do OCPP)
+      if (transacao.meterValues && Array.isArray(transacao.meterValues)) {
+        for (const meterValue of transacao.meterValues) {
+          if (meterValue.sampledValue && Array.isArray(meterValue.sampledValue)) {
+            for (const sample of meterValue.sampledValue) {
+              if (
+                sample.measurand === 'Power.Active.Import' &&
+                sample.value !== undefined
+              ) {
+                return parseFloat(sample.value);
+              }
+            }
+          }
+        }
+      }
+      
+      return null; // Sem dados de potência
+    } catch (error) {
+      console.error('❌ [Polling] Erro ao extrair potência:', error);
+      return null;
     }
   }
 
