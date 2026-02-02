@@ -155,17 +155,32 @@ export async function initDatabase() {
       tipo VARCHAR(50) UNIQUE NOT NULL,
       mensagem TEXT NOT NULL,
       ativo BOOLEAN DEFAULT true,
+      tempo_minutos INTEGER DEFAULT 0,
+      power_threshold_w INTEGER DEFAULT NULL,
       criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
   console.log('✅ Tabela "templates_notificacao" verificada');
 
-  // Inserir templates padrão (5 tipos)
+  // Adicionar colunas se não existirem (migração incremental)
   await query(`
-    INSERT INTO templates_notificacao (tipo, mensagem, ativo)
+    ALTER TABLE templates_notificacao
+      ADD COLUMN IF NOT EXISTS tempo_minutos INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS power_threshold_w INTEGER DEFAULT NULL;
+  `);
+
+  // Remover templates antigos
+  await query(`
+    DELETE FROM templates_notificacao
+    WHERE tipo IN ('inicio', 'fim', 'erro', 'ocioso', 'disponivel');
+  `);
+
+  // Inserir os 4 novos templates principais
+  await query(`
+    INSERT INTO templates_notificacao (tipo, mensagem, tempo_minutos, power_threshold_w, ativo)
     VALUES 
-      ('inicio', '🔋 Olá {{nome}}!
+      ('inicio_recarga', '🔋 Olá {{nome}}!
 
 Seu carregamento foi iniciado no {{charger}}.
 
@@ -173,56 +188,51 @@ Seu carregamento foi iniciado no {{charger}}.
 🕐 Início: {{data}}
 🏢 Apartamento: {{apartamento}}
 
-Acompanhe pelo dashboard VETRIC Gran Marine!', true),
+Acompanhe pelo dashboard VETRIC Gran Marine!', 3, NULL, true),
       
-      ('fim', '✅ Olá {{nome}}!
+      ('inicio_ociosidade', '⚠️ Olá {{nome}}!
 
-Seu carregamento foi concluído com sucesso!
+Seu carregamento no {{charger}} entrou em OCIOSIDADE.
 
-⚡ Energia consumida: {{energia}} kWh
+⚡ Consumo até agora: {{energia}} kWh
+🕐 {{data}}
+
+Sua bateria pode estar cheia. Por favor, remova o cabo para liberar o carregador.
+
+Obrigado pela compreensão! 🙏', 0, 10, false),
+      
+      ('bateria_cheia', '🔋 Olá {{nome}}!
+
+Seu veículo está com a bateria CARREGADA! 🎉
+
+⚡ Consumo total: {{energia}} kWh
 ⏱️ Duração: {{duracao}}
-💰 Custo estimado: R$ {{custo}}
+📍 {{charger}}
 
-🔌 O carregador {{charger}} está novamente disponível.
+Por favor, remova o cabo para liberar o carregador.
 
-Obrigado por utilizar nosso sistema!', true),
+Obrigado por utilizar nosso sistema! 🙏', 3, 10, false),
       
-      ('erro', '⚠️ Olá {{nome}}!
+      ('interrupcao', '⚠️ Olá {{nome}}!
 
-Detectamos um problema no seu carregamento:
+Seu carregamento no {{charger}} foi INTERROMPIDO.
 
-🔌 Carregador: {{charger}}
-❌ Erro: {{erro}}
-🕐 Horário: {{data}}
-🏢 Apartamento: {{apartamento}}
+⚡ Consumo parcial: {{energia}} kWh
+⏱️ Duração: {{duracao}}
+📍 {{charger}}
 
-Por favor, entre em contato com a administração.
+Se não foi você, verifique seu veículo ou entre em contato com a administração.
 
 Telefone: (82) 3333-4444
-WhatsApp: (82) 99999-9999', true),
-      
-      ('ocioso', '💤 Olá {{nome}}!
-
-Seu carregador está ocioso há {{tempo}}.
-
-🔌 Carregador: {{charger}}
-📍 Local: {{localizacao}}
-
-Se o carregamento já terminou, por favor libere a vaga para outros moradores.
-
-Obrigado pela compreensão! 🙏', true),
-      
-      ('disponivel', '✨ Olá {{nome}}!
-
-O carregador {{charger}} está disponível!
-
-📍 Local: {{localizacao}}
-🏢 Próximo ao seu apartamento: {{apartamento}}
-
-Aproveite para carregar seu veículo elétrico!', true)
-    ON CONFLICT (tipo) DO NOTHING
+WhatsApp: (82) 99999-9999', 0, NULL, false)
+    ON CONFLICT (tipo) DO UPDATE SET
+      mensagem = EXCLUDED.mensagem,
+      tempo_minutos = EXCLUDED.tempo_minutos,
+      power_threshold_w = EXCLUDED.power_threshold_w,
+      ativo = EXCLUDED.ativo,
+      atualizado_em = NOW();
   `);
-  console.log('✅ Templates de notificação inseridos (5 tipos)');
+  console.log('✅ Templates de notificação inseridos (4 eventos principais)');
 
   // Tabela: relatorios
   await query(`
