@@ -41,16 +41,6 @@ export class TemplateNotificacaoModel {
       values.push(data.ativo);
     }
 
-    if (data.tempo_minutos !== undefined) {
-      fields.push(`tempo_minutos = $${paramIndex++}`);
-      values.push(data.tempo_minutos);
-    }
-
-    if (data.power_threshold_w !== undefined) {
-      fields.push(`power_threshold_w = $${paramIndex++}`);
-      values.push(data.power_threshold_w);
-    }
-
     if (fields.length === 0) {
       return this.findByTipo(tipo);
     }

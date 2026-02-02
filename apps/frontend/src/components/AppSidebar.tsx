@@ -8,19 +8,18 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
-  FileBarChart
+  GitBranch
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
 const menuItems = [
   { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'CLIENTE'] },
   { title: 'Relatórios', path: '/relatorios', icon: FileText, roles: ['ADMIN', 'CLIENTE'] },
   { title: 'Consumo', path: '/consumo', icon: BarChart3, roles: ['ADMIN', 'CLIENTE'] },
-  { title: 'Relatórios VETRIC', path: '/relatorios-vetric', icon: FileBarChart, roles: ['ADMIN'] },
   { title: 'Usuários', path: '/usuarios', icon: Users, roles: ['ADMIN'] },
   { title: 'Configurações', path: '/configuracoes', icon: Settings, roles: ['ADMIN'] },
   { title: 'Perfil', path: '/perfil', icon: User, roles: ['ADMIN', 'CLIENTE'] },
@@ -33,6 +32,24 @@ interface AppSidebarProps {
 export function AppSidebar({ className }: AppSidebarProps) {
   const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const [gitBranch, setGitBranch] = useState<string>('main');
+
+  // Buscar informações do sistema (branch git)
+  useEffect(() => {
+    const fetchSystemInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/system/info');
+        const data = await response.json();
+        if (data.success && data.data.gitBranch) {
+          setGitBranch(data.data.gitBranch);
+        }
+      } catch (error) {
+        console.log('Não foi possível obter informações do sistema');
+      }
+    };
+
+    fetchSystemInfo();
+  }, []);
 
   // Filtrar menu por role do usuário
   const visibleMenuItems = menuItems.filter(item => 
@@ -136,6 +153,16 @@ export function AppSidebar({ className }: AppSidebarProps) {
                 </p>
               </div>
             )}
+            {/* Indicador de Branch Git */}
+            {!collapsed && (
+              <div className="px-3 py-2 mb-2">
+                <div className="flex items-center gap-2 text-xs text-sidebar-foreground/50">
+                  <GitBranch className="h-3 w-3" />
+                  <span className="font-mono">{gitBranch}</span>
+                </div>
+              </div>
+            )}
+            
             <button
               onClick={logout}
               className={cn(

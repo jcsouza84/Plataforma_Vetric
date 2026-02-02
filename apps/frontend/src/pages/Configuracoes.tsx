@@ -205,18 +205,22 @@ export default function Configuracoes() {
   };
 
   const templateInfo = {
-    inicio: {
-      title: '🔋 Início de Recarga',
+    inicio_recarga: {
+      title: '🔋 Carregamento Iniciado',
       description: 'Enviado IMEDIATAMENTE quando o carregamento é iniciado (StartTransaction)',
       variables: ['{{nome}}', '{{charger}}', '{{localizacao}}', '{{data}}', '{{apartamento}}'],
-      hasTempo: false,
+      hasTempo: true,
+      tempoLabel: 'Aguardar (minutos)',
+      tempoHelp: '0 = envia imediatamente',
       hasThreshold: false,
     },
     inicio_ociosidade: {
       title: '⚠️ Início de Ociosidade',
       description: 'Enviado IMEDIATAMENTE quando a potência cai abaixo do threshold (bateria pode estar cheia)',
       variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{data}}'],
-      hasTempo: false,
+      hasTempo: true,
+      tempoLabel: 'Aguardar (minutos)',
+      tempoHelp: '0 = envia imediatamente',
       hasThreshold: true,
       thresholdLabel: 'Potência mínima (W)',
       thresholdHelp: 'Detecta quando power cai abaixo deste valor (ex: 10W)',
@@ -236,7 +240,9 @@ export default function Configuracoes() {
       title: '⚠️ Interrupção',
       description: 'Enviado IMEDIATAMENTE quando o carregamento para inesperadamente (não foi fim normal)',
       variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}'],
-      hasTempo: false,
+      hasTempo: true,
+      tempoLabel: 'Aguardar (minutos)',
+      tempoHelp: '0 = envia imediatamente',
       hasThreshold: false,
     },
   };

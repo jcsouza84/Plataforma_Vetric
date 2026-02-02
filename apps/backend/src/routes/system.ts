@@ -1,69 +1,46 @@
 /**
- * ⚙️ VETRIC - Rotas: Sistema
+ * 🔧 VETRIC - Rotas: Informações do Sistema
  */
 
 import { Router, Request, Response } from 'express';
-import { authenticate, adminOnly } from '../middleware/auth';
+import { execSync } from 'child_process';
 
 const router = Router();
 
-// Todas as rotas exigem autenticação ADMIN
-router.use(authenticate);
-router.use(adminOnly);
-
-// POST /api/system/restart - Reiniciar o backend
-router.post('/restart', async (req: Request, res: Response) => {
+/**
+ * GET /api/system/info
+ * Retorna informações do sistema (branch git, versão, etc)
+ */
+router.get('/info', async (req: Request, res: Response) => {
   try {
-    console.log(`\n🔄 REINICIANDO BACKEND...`);
-    console.log(`👤 Solicitado por: ${req.user?.email} (${req.user?.nome})`);
-    console.log(`⏰ Horário: ${new Date().toLocaleString('pt-BR')}\n`);
+    let gitBranch = 'unknown';
+    
+    try {
+      // Tentar pegar a branch do git
+      gitBranch = execSync('git branch --show-current', { 
+        encoding: 'utf-8',
+        cwd: process.cwd()
+      }).trim();
+    } catch (error) {
+      // Se falhar, tentar da variável de ambiente
+      gitBranch = process.env.GIT_BRANCH || 'main';
+    }
 
-    // Enviar resposta antes de reiniciar
-    res.json({
-      success: true,
-      message: 'Backend será reiniciado em 2 segundos...',
-      restartTime: new Date().toISOString(),
-    });
-
-    // Aguardar 2 segundos para enviar a resposta
-    setTimeout(() => {
-      console.log('\n👋 Reiniciando backend...');
-      console.log('✨ Enviando sinal SIGUSR2 para ts-node-dev\n');
-      
-      // Enviar sinal de restart para o ts-node-dev
-      // SIGUSR2 é o sinal padrão que o ts-node-dev usa para restart
-      process.kill(process.pid, 'SIGUSR2');
-    }, 2000);
-
-  } catch (error: any) {
-    console.error('❌ Erro ao reiniciar backend:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
-// GET /api/system/status - Status do backend
-router.get('/status', async (req: Request, res: Response) => {
-  try {
     res.json({
       success: true,
       data: {
-        status: 'online',
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-        memory: process.memoryUsage(),
-        node_version: process.version,
-      },
+        gitBranch,
+        nodeVersion: process.version,
+        environment: process.env.NODE_ENV || 'development',
+        uptime: Math.floor(process.uptime()),
+      }
     });
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: error.message
     });
   }
 });
 
 export default router;
-

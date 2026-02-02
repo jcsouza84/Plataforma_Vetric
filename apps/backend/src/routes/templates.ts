@@ -61,14 +61,8 @@ router.put('/:tipo', adminOnly, async (req: Request, res: Response) => {
     const tipo = req.params.tipo;
     const data: UpdateTemplateDTO = req.body;
 
-    // Validações básicas - verificar se pelo menos um campo foi enviado
-    const hasUpdates = 
-      data.mensagem !== undefined || 
-      data.ativo !== undefined ||
-      data.tempo_minutos !== undefined ||
-      data.power_threshold_w !== undefined;
-
-    if (!hasUpdates) {
+    // Validações básicas
+    if (!data.mensagem && data.ativo === undefined) {
       return res.status(400).json({
         success: false,
         error: 'Nenhum campo para atualizar',
