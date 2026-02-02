@@ -209,6 +209,21 @@ export default function Configuracoes() {
       description: 'Enviado quando o carregamento é iniciado',
       variables: ['{{nome}}', '{{charger}}', '{{localizacao}}', '{{data}}', '{{apartamento}}'],
     },
+    inicio_ociosidade: {
+      title: '⚠️ Início de Ociosidade',
+      description: 'Enviado IMEDIATAMENTE quando a potência cai abaixo do threshold (bateria pode estar cheia)',
+      variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{data}}'],
+    },
+    bateria_cheia: {
+      title: '🔋 Bateria Cheia',
+      description: 'Enviado após X minutos com potência baixa (confirma que bateria está carregada)',
+      variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}'],
+    },
+    interrupcao: {
+      title: '⚠️ Interrupção',
+      description: 'Enviado quando o carregamento é interrompido inesperadamente',
+      variables: ['{{nome}}', '{{charger}}', '{{energia}}', '{{duracao}}'],
+    },
     fim: {
       title: '✅ Fim de Carregamento',
       description: 'Enviado quando o carregamento é concluído',
