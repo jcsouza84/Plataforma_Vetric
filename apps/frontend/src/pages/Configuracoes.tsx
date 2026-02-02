@@ -290,15 +290,32 @@ export default function Configuracoes() {
                       </div>
                       <Switch
                         checked={isEditing ? currentData.ativo : template.ativo}
-                        onCheckedChange={(checked) => {
+                        onCheckedChange={async (checked) => {
                           if (isEditing) {
+                            // Apenas atualizar estado local se estiver editando
                             setTemplateData({
                               ...templateData,
                               [template.tipo]: { ...currentData, ativo: checked },
                             });
                           } else {
-                            handleEditTemplate(template.tipo, { ...template, ativo: checked });
-                            handleSaveTemplate(template.tipo);
+                            // Fazer chamada direta da API se não estiver editando
+                            try {
+                              await updateMutation.mutateAsync({
+                                tipo: template.tipo,
+                                updates: { ativo: checked },
+                              });
+
+                              toast({
+                                title: checked ? 'Notificação ativada!' : 'Notificação desativada!',
+                                description: `Template "${info?.title}" foi ${checked ? 'ativado' : 'desativado'}`,
+                              });
+                            } catch (error: any) {
+                              toast({
+                                title: 'Erro ao atualizar',
+                                description: error.response?.data?.error || error.message,
+                                variant: 'destructive',
+                              });
+                            }
                           }
                         }}
                       />

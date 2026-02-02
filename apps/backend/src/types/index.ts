@@ -175,9 +175,11 @@ export interface Carregamento {
 
 export interface TemplateNotificacao {
   id?: number;
-  tipo: 'inicio_carregamento' | 'fim_carregamento' | 'erro_carregamento';
+  tipo: string;
   mensagem: string;
   ativo: boolean;
+  tempo_minutos?: number;
+  power_threshold_w?: number;
   criado_em?: Date;
   atualizado_em?: Date;
 }
@@ -210,6 +212,8 @@ export interface UpdateMoradorDTO {
 export interface UpdateTemplateDTO {
   mensagem?: string;
   ativo?: boolean;
+  tempo_minutos?: number;
+  power_threshold_w?: number;
 }
 
 // ==================== WEBSOCKET ====================
