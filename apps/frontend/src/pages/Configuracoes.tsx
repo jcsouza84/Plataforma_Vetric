@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Save, Bell, Zap, Loader2, Send, Eye, EyeOff, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
+import { Save, Bell, Zap, Loader2, Send, Eye, EyeOff, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,8 +13,6 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTemplates, useUpdateTemplate, useConfiguracoes, useUpdateConfiguracoes } from '@/hooks/useVetricData';
-import { useMensagensNotificacoes, useUpdateMensagemNotificacao, useToggleMensagemNotificacao } from '@/hooks/useMensagensNotificacoes';
-import { MensagemCard } from '@/components/MensagemCard';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import api from '@/services/api';
@@ -27,11 +25,6 @@ export default function Configuracoes() {
   // Configurações Evolution API
   const { data: configuracoes, isLoading: isLoadingConfigs } = useConfiguracoes();
   const updateConfiguracoesMutation = useUpdateConfiguracoes();
-
-  // 🆕 Mensagens de Notificações Inteligentes
-  const { data: mensagensNotificacoes, isLoading: isLoadingMensagens } = useMensagensNotificacoes();
-  const updateMensagemMutation = useUpdateMensagemNotificacao();
-  const toggleMensagemMutation = useToggleMensagemNotificacao();
 
   const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
   const [templateData, setTemplateData] = useState<{ 
@@ -108,40 +101,6 @@ export default function Configuracoes() {
     }
   };
 
-  // 🆕 Handlers para Mensagens de Notificações Inteligentes
-  const handleSaveMensagem = async (tipo: string, updates: any) => {
-    try {
-      await updateMensagemMutation.mutateAsync({ tipo, updates });
-      
-      toast({
-        title: 'Sucesso!',
-        description: 'Mensagem atualizada com sucesso',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Erro ao salvar',
-        description: error.response?.data?.error || error.message,
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleToggleMensagem = async (tipo: string) => {
-    try {
-      await toggleMensagemMutation.mutateAsync(tipo);
-      
-      toast({
-        title: 'Sucesso!',
-        description: 'Status da mensagem alterado',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Erro ao alternar',
-        description: error.response?.data?.error || error.message,
-        variant: 'destructive',
-      });
-    }
-  };
 
   const handleSendTestMessage = async () => {
     if (!testPhone || !testMessage) {
@@ -298,10 +257,6 @@ export default function Configuracoes() {
           <TabsTrigger value="templates" className="gap-2">
             <Bell size={16} />
             Templates WhatsApp
-          </TabsTrigger>
-          <TabsTrigger value="notificacoes" className="gap-2">
-            <Sparkles size={16} />
-            Notificações Inteligentes
           </TabsTrigger>
           <TabsTrigger value="evolution" className="gap-2">
             <Zap size={16} />
@@ -817,128 +772,6 @@ export default function Configuracoes() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        {/* 🆕 Notificações Inteligentes */}
-        <TabsContent value="notificacoes" className="space-y-4">
-          {isLoadingMensagens ? (
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-1/3" />
-                    <Skeleton className="h-4 w-2/3 mt-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-32 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Header com informações */}
-              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles size={20} className="text-blue-600" />
-                    Notificações Inteligentes
-                  </CardTitle>
-                  <CardDescription className="text-gray-700">
-                    Configure mensagens contextualizadas baseadas no comportamento real de carregamento.
-                    Todas as mensagens estão <strong>DESLIGADAS</strong> por padrão.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-start gap-2">
-                      <div className="text-blue-600 mt-1">🔋</div>
-                      <div>
-                        <strong>Início de Recarga:</strong> Confirma após X minutos do início
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="text-orange-600 mt-1">⚠️</div>
-                      <div>
-                        <strong>Início de Ociosidade:</strong> Alerta imediato ao detectar 0W
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="text-green-600 mt-1">🔋</div>
-                      <div>
-                        <strong>Bateria Cheia:</strong> Após X minutos de potência 0W
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="text-red-600 mt-1">⚠️</div>
-                      <div>
-                        <strong>Interrupção:</strong> Detecta 0W + SuspendedEV/StopTransaction
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Cards de mensagens */}
-              {mensagensNotificacoes && mensagensNotificacoes.length > 0 ? (
-                <div className="space-y-4">
-                  {mensagensNotificacoes.map((mensagem) => (
-                    <MensagemCard
-                      key={mensagem.tipo}
-                      mensagem={mensagem}
-                      onSave={handleSaveMensagem}
-                      onToggle={handleToggleMensagem}
-                      isSaving={updateMensagemMutation.isPending}
-                      isToggling={toggleMensagemMutation.isPending}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <Card>
-                  <CardContent className="flex items-center justify-center py-12">
-                    <div className="text-center">
-                      <Sparkles size={48} className="mx-auto text-muted-foreground mb-4" />
-                      <p className="text-lg font-semibold text-muted-foreground">
-                        Nenhuma mensagem configurada
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Execute as migrations para criar as mensagens padrão
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Avisos importantes */}
-              <Card className="border-orange-200 bg-orange-50">
-                <CardHeader>
-                  <CardTitle className="text-orange-900 flex items-center gap-2">
-                    ⚠️ Importante
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm text-orange-800">
-                  <div>
-                    <strong>🔴 Status DESLIGADO:</strong> A mensagem não será enviada automaticamente.
-                  </div>
-                  <div>
-                    <strong>🟢 Status ATIVO:</strong> A mensagem será enviada automaticamente quando as condições forem atendidas.
-                  </div>
-                  <div>
-                    <strong>⚡ Power Threshold:</strong> Define a potência mínima (em Watts) para detectar ociosidade. 
-                    Exemplo: 10W = potência menor que 10W é considerada ociosa.
-                  </div>
-                  <div>
-                    <strong>⏱️ Tempo (minutos):</strong> Atraso em minutos antes de enviar a mensagem. 
-                    0 = envia imediatamente.
-                  </div>
-                  <div className="pt-2 border-t border-orange-200">
-                    <strong>💡 Dica:</strong> Comece ativando apenas "Início de Recarga" para testar. 
-                    Depois ative as demais gradualmente.
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          )}
         </TabsContent>
       </Tabs>
     </DashboardLayout>
