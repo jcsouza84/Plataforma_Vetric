@@ -88,6 +88,9 @@ export class PollingService {
       console.log(`🔍 [Polling] Verificando status de todos os carregadores...`);
       await this.verificarStatusCarregadores();
 
+      // 🆕 MÉTODO 3: Processar eventos de notificação (Ociosidade, Bateria Cheia, Interrupção)
+      await this.processarEventosCarregamento();
+
       // Limpar transações conhecidas antigas
       await this.limparTransacoesFinalizadas();
 
@@ -349,6 +352,227 @@ export class PollingService {
 
     } catch (error: any) {
       console.error('❌ [Polling] Erro ao processar transação:', error.message);
+    }
+  }
+
+  /**
+   * 🆕 Processar eventos de notificação para carregamentos ativos
+   * Detecta: Início de Ociosidade, Bateria Cheia, Interrupção
+   */
+  private async processarEventosCarregamento(): Promise<void> {
+    try {
+      const { query } = await import('../config/database');
+      const { notificationService } = await import('./NotificationService');
+      const { TemplateNotificacaoModel } = await import('../models/TemplateNotificacao');
+      
+      // Buscar todos os carregamentos ativos
+      const carregamentosAtivos = await query(`
+        SELECT c.*, m.nome, m.telefone, m.notificacoes_ativas, m.apartamento
+        FROM carregamentos c
+        LEFT JOIN moradores m ON m.id = c.morador_id
+        WHERE c.fim IS NULL
+        ORDER BY c.inicio ASC
+      `);
+
+      if (carregamentosAtivos.length === 0) {
+        return;
+      }
+
+      console.log(`🔍 [Eventos] Processando ${carregamentosAtivos.length} carregamento(s) ativo(s) para eventos 2, 3, 4...`);
+
+      // Buscar chargers para obter dados de potência
+      const chargers = await cveService.getChargers();
+
+      for (const carregamento of carregamentosAtivos) {
+        try {
+          // Encontrar o charger correspondente
+          const charger = chargers.find(c => c.uuid === carregamento.charger_uuid);
+          if (!charger) {
+            console.log(`⚠️  [Eventos] Charger ${carregamento.charger_uuid} não encontrado na lista`);
+            continue;
+          }
+
+          const connector = charger.connectors?.[0];
+          if (!connector) {
+            console.log(`⚠️  [Eventos] Connector não encontrado para ${carregamento.charger_name}`);
+            continue;
+          }
+
+          // Obter potência atual (power_w)
+          const currentPower = connector.power || connector.lastStatus?.power || 0;
+          const status = connector.lastStatus?.status || 'Unknown';
+
+          // Buscar templates ativos
+          const templateOciosidade = await TemplateNotificacaoModel.findByTipo('inicio_ociosidade');
+          const templateBateriaCheia = await TemplateNotificacaoModel.findByTipo('bateria_cheia');
+          const templateInterrupcao = await TemplateNotificacaoModel.findByTipo('interrupcao');
+
+          // Calcular tempo desde o início
+          const minutosAtivo = Math.floor((Date.now() - new Date(carregamento.inicio).getTime()) / 60000);
+
+          // ============================================
+          // EVENTO 2: INÍCIO DE OCIOSIDADE
+          // ============================================
+          if (templateOciosidade && templateOciosidade.ativo) {
+            const threshold = templateOciosidade.power_threshold_w || 10;
+            const ultimoPower = carregamento.ultimo_power_w || currentPower;
+
+            // Detecta: Power atual < threshold E power anterior >= threshold
+            if (currentPower < threshold && ultimoPower >= threshold && !carregamento.notificacao_ociosidade_enviada) {
+              console.log(`⚠️  [Evento 2] Ociosidade detectada! ${carregamento.charger_name} - Power: ${currentPower}W < ${threshold}W`);
+
+              // Verificar se tem morador e notificações ativas
+              if (carregamento.morador_id && carregamento.notificacoes_ativas && carregamento.telefone) {
+                try {
+                  // Calcular energia consumida até agora
+                  const transacoes = await cveService.getActiveTransactions();
+                  const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                  const energia = transacao?.energyHumanReadable || '0.0 kWh';
+
+                  // Enviar notificação IMEDIATAMENTE (tempo = 0)
+                  await notificationService.notificarOciosidade(
+                    carregamento.morador_id,
+                    carregamento.charger_name,
+                    energia
+                  );
+
+                  // Marcar timestamp e flag
+                  await query(
+                    `UPDATE carregamentos 
+                     SET primeiro_ocioso_em = NOW(),
+                         notificacao_ociosidade_enviada = true,
+                         ultimo_power_w = $1
+                     WHERE id = $2`,
+                    [currentPower, carregamento.id]
+                  );
+
+                  console.log(`📱 [Evento 2] Notificação de ociosidade enviada para ${carregamento.nome}`);
+                } catch (error: any) {
+                  console.error(`❌ [Evento 2] Erro ao enviar notificação de ociosidade:`, error.message);
+                }
+              } else {
+                // Sem morador ou sem notificações, apenas marcar timestamp
+                await query(
+                  `UPDATE carregamentos 
+                   SET primeiro_ocioso_em = NOW(),
+                       ultimo_power_w = $1
+                   WHERE id = $2`,
+                  [currentPower, carregamento.id]
+                );
+              }
+            }
+          }
+
+          // ============================================
+          // EVENTO 3: BATERIA CHEIA
+          // ============================================
+          if (templateBateriaCheia && templateBateriaCheia.ativo) {
+            const threshold = templateBateriaCheia.power_threshold_w || 10;
+            const tempoMinimo = templateBateriaCheia.tempo_minutos || 3;
+
+            // Detecta: Está em ociosidade há X minutos E ainda não enviou notificação
+            if (carregamento.primeiro_ocioso_em && !carregamento.notificacao_bateria_cheia_enviada) {
+              const minutosOcioso = Math.floor((Date.now() - new Date(carregamento.primeiro_ocioso_em).getTime()) / 60000);
+
+              if (minutosOcioso >= tempoMinimo && currentPower < threshold) {
+                console.log(`🔋 [Evento 3] Bateria cheia detectada! ${carregamento.charger_name} - ${minutosOcioso} min ocioso`);
+
+                // Verificar se tem morador e notificações ativas
+                if (carregamento.morador_id && carregamento.notificacoes_ativas && carregamento.telefone) {
+                  try {
+                    // Calcular energia e duração totais
+                    const transacoes = await cveService.getActiveTransactions();
+                    const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                    const energia = transacao?.energyHumanReadable || '0.0 kWh';
+
+                    // Enviar notificação
+                    await notificationService.notificarBateriaCheia(
+                      carregamento.morador_id,
+                      carregamento.charger_name,
+                      energia,
+                      minutosAtivo
+                    );
+
+                    // Marcar flag
+                    await query(
+                      `UPDATE carregamentos 
+                       SET notificacao_bateria_cheia_enviada = true,
+                           ultimo_power_w = $1
+                       WHERE id = $2`,
+                      [currentPower, carregamento.id]
+                    );
+
+                    console.log(`📱 [Evento 3] Notificação de bateria cheia enviada para ${carregamento.nome}`);
+                  } catch (error: any) {
+                    console.error(`❌ [Evento 3] Erro ao enviar notificação de bateria cheia:`, error.message);
+                  }
+                }
+              }
+            }
+          }
+
+          // ============================================
+          // EVENTO 4: INTERRUPÇÃO
+          // ============================================
+          if (templateInterrupcao && templateInterrupcao.ativo) {
+            // Detecta: Status mudou para Available E carregamento ainda ativo no banco
+            if (status === 'Available' && !carregamento.interrupcao_detectada) {
+              console.log(`⚠️  [Evento 4] Interrupção detectada! ${carregamento.charger_name} - Status: ${status}`);
+
+              // Verificar se tem morador e notificações ativas
+              if (carregamento.morador_id && carregamento.notificacoes_ativas && carregamento.telefone) {
+                try {
+                  // Calcular energia parcial e duração
+                  const transacoes = await cveService.getActiveTransactions();
+                  const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                  const energia = transacao?.energyHumanReadable || '0.0 kWh';
+
+                  // Enviar notificação IMEDIATAMENTE
+                  await notificationService.notificarInterrupcao(
+                    carregamento.morador_id,
+                    carregamento.charger_name,
+                    energia,
+                    minutosAtivo
+                  );
+
+                  console.log(`📱 [Evento 4] Notificação de interrupção enviada para ${carregamento.nome}`);
+                } catch (error: any) {
+                  console.error(`❌ [Evento 4] Erro ao enviar notificação de interrupção:`, error.message);
+                }
+              }
+
+              // Marcar como interrompido e finalizar carregamento
+              await query(
+                `UPDATE carregamentos 
+                 SET interrupcao_detectada = true,
+                     tipo_finalizacao = 'interrupcao',
+                     fim = NOW(),
+                     ultimo_power_w = $1
+                 WHERE id = $2`,
+                [currentPower, carregamento.id]
+              );
+
+              console.log(`✅ [Evento 4] Carregamento ${carregamento.id} finalizado por interrupção`);
+            }
+          }
+
+          // ============================================
+          // ATUALIZAR ultimo_power_w (sempre)
+          // ============================================
+          if (currentPower !== carregamento.ultimo_power_w) {
+            await query(
+              `UPDATE carregamentos SET ultimo_power_w = $1 WHERE id = $2`,
+              [currentPower, carregamento.id]
+            );
+          }
+
+        } catch (error: any) {
+          console.error(`❌ [Eventos] Erro ao processar carregamento ${carregamento.id}:`, error.message);
+        }
+      }
+
+    } catch (error: any) {
+      console.error('❌ [Eventos] Erro ao processar eventos:', error.message);
     }
   }
 
