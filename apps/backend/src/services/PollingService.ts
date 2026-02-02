@@ -403,7 +403,7 @@ export class PollingService {
               carregamento.morador_id,
               {
                 charger: carregamento.charger_name,
-                energia: (transacao.energyKwh || 0).toFixed(2),
+                energia: ((transacao.energy || 0) / 1000).toFixed(2), // Converter Wh para kWh
                 data: new Date().toLocaleString('pt-BR'),
               }
             );
@@ -451,7 +451,7 @@ export class PollingService {
                 carregamento.morador_id,
                 {
                   charger: carregamento.charger_name,
-                  energia: (transacao.energyKwh || 0).toFixed(2),
+                  energia: ((transacao.energy || 0) / 1000).toFixed(2), // Converter Wh para kWh
                   duracao: transacao.durationHumanReadable || 'N/A',
                 }
               );
@@ -484,31 +484,17 @@ export class PollingService {
 
   /**
    * 🆕 Extrair potência (Power.Active.Import) dos MeterValues
+   * NOTA: A API CVE não retorna dados de potência em tempo real na transação.
+   * Por enquanto, retornamos null. Futuramente, podemos buscar via endpoint separado.
    */
   private extrairPotencia(transacao: CVETransaction): number | null {
     try {
-      // Tentar obter do campo direto (se a API retornar)
-      if (transacao.powerW !== undefined && transacao.powerW !== null) {
-        return transacao.powerW;
-      }
+      // TODO: A API CVE não retorna powerW ou meterValues na transação
+      // Para implementar detecção de ociosidade/bateria cheia, precisaremos:
+      // 1. Buscar dados de power via outro endpoint da API CVE
+      // 2. Ou usar o status do conector (Charging vs Available)
       
-      // Tentar extrair de meterValues (formato comum do OCPP)
-      if (transacao.meterValues && Array.isArray(transacao.meterValues)) {
-        for (const meterValue of transacao.meterValues) {
-          if (meterValue.sampledValue && Array.isArray(meterValue.sampledValue)) {
-            for (const sample of meterValue.sampledValue) {
-              if (
-                sample.measurand === 'Power.Active.Import' &&
-                sample.value !== undefined
-              ) {
-                return parseFloat(sample.value);
-              }
-            }
-          }
-        }
-      }
-      
-      return null; // Sem dados de potência
+      return null; // Sem dados de potência disponíveis
     } catch (error) {
       console.error('❌ [Polling] Erro ao extrair potência:', error);
       return null;
