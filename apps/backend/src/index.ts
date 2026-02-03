@@ -24,6 +24,7 @@ import relatoriosRoutes from './routes/relatorios'; // Sistema antigo (upload de
 import testEvolutionRoutes from './routes/testEvolution';
 import configRoutes from './routes/config';
 import systemRoutes from './routes/system';
+import logsRoutes from './routes/logs';
 
 dotenv.config();
 
@@ -114,6 +115,7 @@ app.use('/api/relatorios', relatoriosRoutes); // Sistema antigo (upload de PDFs)
 app.use('/api/test-evolution', testEvolutionRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/system', systemRoutes);
+app.use('/api/logs', logsRoutes);
 
 // Rota de health check
 app.get('/health', (req, res) => {
