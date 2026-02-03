@@ -12,7 +12,8 @@
     "migrate": "ts-node src/database/index.ts run",
     "migrate:status": "ts-node src/database/index.ts status",
     "migrate:rollback": "ts-node src/database/index.ts rollback",
-    "seed:moradores": "ts-node run-seed-moradores.ts"
+    "seed:moradores": "ts-node run-seed-moradores.ts",
+    "simulate": "ts-node simulate-charging.ts"
   },
   "keywords": [
     "vetric",

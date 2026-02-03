@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { config } from '../config/env';
 import { CVECharger, CVEConnector, CVETransaction } from '../types';
 import { query } from '../config/database';
+import { simulatorService } from './SimulatorService';
 
 export class CVEService {
   private api: AxiosInstance;
@@ -111,6 +112,11 @@ export class CVEService {
    * Buscar todos os carregadores (com retry automático)
    */
   async getChargers(): Promise<CVECharger[]> {
+    // 🎮 MODO SIMULAÇÃO: Retornar dados simulados
+    if (process.env.ENABLE_SIMULATOR === 'true' && simulatorService.isRunning()) {
+      return simulatorService.getSimulatedChargers();
+    }
+
     await this.ensureAuthenticated();
 
     return this.retryWithBackoff(async () => {
@@ -289,6 +295,11 @@ export class CVEService {
    * Buscar transações ativas (sem stopTimestamp)
    */
   async getActiveTransactions(): Promise<CVETransaction[]> {
+    // 🎮 MODO SIMULAÇÃO: Retornar dados simulados
+    if (process.env.ENABLE_SIMULATOR === 'true' && simulatorService.isRunning()) {
+      return simulatorService.getSimulatedTransactions();
+    }
+
     // Buscar transações do dia inteiro (00:00:00 até 23:59:59)
     const now = new Date();
     

@@ -25,6 +25,7 @@ import testEvolutionRoutes from './routes/testEvolution';
 import configRoutes from './routes/config';
 import systemRoutes from './routes/system';
 import logsRoutes from './routes/logs';
+import simulatorRoutes from './routes/simulator'; // 🎮 Simulador (apenas local)
 
 dotenv.config();
 
@@ -116,6 +117,12 @@ app.use('/api/test-evolution', testEvolutionRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/logs', logsRoutes);
+
+// 🎮 Simulador (apenas em ambiente LOCAL com ENABLE_SIMULATOR=true)
+if (process.env.ENABLE_SIMULATOR === 'true') {
+  app.use('/api/simulator', simulatorRoutes);
+  console.log('🎮 Simulador habilitado!');
+}
 
 // Rota de health check
 app.get('/health', (req, res) => {
