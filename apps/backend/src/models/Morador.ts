@@ -22,9 +22,9 @@ export class MoradorModel {
     return result[0] || null;
   }
 
-  // Buscar por Tag RFID
+  // Buscar por Tag RFID (case-insensitive para suportar diferentes equipamentos)
   static async findByTag(tag: string): Promise<Morador | null> {
-    const sql = 'SELECT * FROM moradores WHERE tag_rfid = $1';
+    const sql = 'SELECT * FROM moradores WHERE UPPER(tag_rfid) = UPPER($1)';
     const result = await query<Morador>(sql, [tag]);
     return result[0] || null;
   }
