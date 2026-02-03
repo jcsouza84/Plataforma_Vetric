@@ -49,6 +49,7 @@ export interface CVEConnectorStatus {
   socPercentage: number | null;
   currentChargingUserName: string | null;
   idTag?: string; // Tag RFID do usuário (quando disponível)
+  power?: number; // Potência atual em watts (quando disponível)
 }
 
 export interface CVEAddress {
