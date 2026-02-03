@@ -5,6 +5,7 @@ import {
   Users, 
   User, 
   Settings,
+  Terminal,
   LogOut,
   ChevronLeft,
   Menu,
@@ -22,6 +23,7 @@ const menuItems = [
   { title: 'Consumo', path: '/consumo', icon: BarChart3, roles: ['ADMIN', 'CLIENTE'] },
   { title: 'Usuários', path: '/usuarios', icon: Users, roles: ['ADMIN'] },
   { title: 'Configurações', path: '/configuracoes', icon: Settings, roles: ['ADMIN'] },
+  { title: 'Logs', path: '/logs', icon: Terminal, roles: ['ADMIN'] },
   { title: 'Perfil', path: '/perfil', icon: User, roles: ['ADMIN', 'CLIENTE'] },
 ];
 

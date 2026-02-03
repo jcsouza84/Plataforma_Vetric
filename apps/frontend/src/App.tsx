@@ -14,6 +14,7 @@ import Consumo from "./pages/Consumo";
 import Usuarios from "./pages/Usuarios";
 import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
+import MonitorTerminal from "./pages/MonitorTerminal";
 import NotFound from "./pages/NotFound";
 
 // 🆕 VETRIC Reports V2
@@ -68,6 +69,11 @@ const App = () => (
             <Route path="/configuracoes" element={
               <PrivateRoute allowedRoles={['ADMIN']}>
                 <Configuracoes />
+              </PrivateRoute>
+            } />
+            <Route path="/logs" element={
+              <PrivateRoute allowedRoles={['ADMIN']}>
+                <MonitorTerminal />
               </PrivateRoute>
             } />
             <Route path="/perfil" element={
