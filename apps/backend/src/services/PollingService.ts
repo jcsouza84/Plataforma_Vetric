@@ -9,12 +9,17 @@ import { cveService } from './CVEService';
 import { MoradorModel } from '../models/Morador';
 import { CarregamentoModel } from '../models/Carregamento';
 import { CVETransaction } from '../types';
+import { logService } from './LogService';
 
 export class PollingService {
   private intervalId: NodeJS.Timeout | null = null;
   private isRunning: boolean = false;
   private pollingInterval: number = 10000; // 10 segundos
   private transacoesConhecidas: Map<string, number> = new Map(); // transactionId → carregamentoId
+  
+  // 🆕 Controle de logs de heartbeat (estratégia híbrida)
+  private lastHeartbeatLogged: Map<string, number> = new Map(); // chargerUuid → timestamp
+  private lastStatus: Map<string, string> = new Map(); // chargerUuid → status
 
   constructor(pollingInterval?: number) {
     if (pollingInterval) {
@@ -68,6 +73,8 @@ export class PollingService {
    * Executar uma verificação
    */
   private async poll(): Promise<void> {
+    const inicioPolling = Date.now();
+    
     try {
       // MÉTODO 1: Buscar transações ativas do CVE (mais confiável)
       const transacoesAtivas = await cveService.getActiveTransactions();
@@ -94,8 +101,28 @@ export class PollingService {
       // Limpar transações conhecidas antigas
       await this.limparTransacoesFinalizadas();
 
+      // 🆕 LOG: Ciclo de polling completado com sucesso
+      const duracaoPolling = Date.now() - inicioPolling;
+      await logService.logPolling(
+        'POLLING_CYCLE',
+        `Ciclo completado: ${transacoesAtivas.length} transações processadas`,
+        'DEBUG',
+        undefined,
+        { 
+          transacoes: transacoesAtivas.length,
+          duracao_ms: duracaoPolling
+        }
+      );
+
     } catch (error: any) {
       console.error('❌ [Polling] Erro ao buscar transações:', error.message);
+      
+      // 🆕 LOG: Erro no polling
+      await logService.logErro(
+        'POLLING_ERROR',
+        `Erro no ciclo de polling: ${error.message}`,
+        error
+      );
       
       // Fallback: verificar status dos carregadores diretamente
       try {
@@ -103,6 +130,11 @@ export class PollingService {
         await this.verificarStatusCarregadores();
       } catch (fallbackError: any) {
         console.error('❌ [Polling] Erro no fallback:', fallbackError.message);
+        await logService.logErro(
+          'POLLING_FALLBACK_ERROR',
+          `Erro no fallback do polling: ${fallbackError.message}`,
+          fallbackError
+        );
       }
     }
   }
@@ -122,6 +154,43 @@ export class PollingService {
 
         const status = connector.lastStatus?.status;
         
+        // 🆕 ESTRATÉGIA HÍBRIDA: Log de Heartbeat
+        // Logar SE: (1) Mudou de status OU (2) Passaram 5 minutos
+        const statusAtual = status || 'Unknown';
+        const statusAnterior = this.lastStatus.get(charger.uuid);
+        const mudouStatus = statusAtual !== statusAnterior;
+        
+        const agora = Date.now();
+        const ultimoLog = this.lastHeartbeatLogged.get(charger.uuid) || 0;
+        const passaram5min = (agora - ultimoLog) / 60000 >= 5;
+        
+        if (mudouStatus || passaram5min) {
+          const evento = mudouStatus ? 'STATUS_CHANGE' : 'HEARTBEAT';
+          const nivel = mudouStatus ? 'SUCCESS' : 'DEBUG';
+          const idTag = connector.lastStatus?.idTag;
+          const power = connector.lastStatus?.power;
+          
+          await logService.logCveApi(
+            evento,
+            mudouStatus 
+              ? `${charger.description}: ${statusAnterior || 'Unknown'} → ${statusAtual}`
+              : `${charger.description} está ativo - Status: ${statusAtual}`,
+            charger.uuid,
+            charger.description,
+            { 
+              status: statusAtual, 
+              status_anterior: statusAnterior,
+              idTag: idTag || null,
+              power: power || null,
+              connector_id: connector.connectorId
+            },
+            undefined
+          );
+          
+          this.lastHeartbeatLogged.set(charger.uuid, agora);
+          this.lastStatus.set(charger.uuid, statusAtual);
+        }
+        
         // CASO 1: Carregador ESTÁ CARREGANDO/OCUPADO
         if (status === 'Charging' || status === 'Occupied' || status === 'Preparing') {
           carregadoresAtivos++;
@@ -137,6 +206,17 @@ export class PollingService {
             
             if (morador) {
               console.log(`👤 [Polling] Morador identificado: ${morador.nome} (Apto ${morador.apartamento})`);
+              
+              // 🆕 LOG: Morador identificado com sucesso
+              await logService.logIdentificacao(
+                true,
+                charger.uuid,
+                charger.description,
+                idTag,
+                morador.id!,
+                morador.nome,
+                `Morador ${morador.nome} (Apto ${morador.apartamento}) identificado via heartbeat`
+              );
               
               // Verificar se já existe carregamento ativo
               const carregamentoExistente = await CarregamentoModel.findActiveByCharger(
@@ -166,6 +246,17 @@ export class PollingService {
               }
             } else {
               console.warn(`⚠️  [Polling] Tag RFID ${idTag} não cadastrada`);
+              
+              // 🆕 LOG: Tag não identificada
+              await logService.logIdentificacao(
+                false,
+                charger.uuid,
+                charger.description,
+                idTag,
+                undefined,
+                undefined,
+                `Tag RFID ${idTag} não cadastrada no sistema`
+              );
             }
           } else {
             console.log(`⚠️  [Polling] Carregador ${charger.description} ativo mas sem idTag identificável`);
@@ -231,6 +322,17 @@ export class PollingService {
         if (morador) {
           moradorId = morador.id!;
           console.log(`✅ [Polling] Morador identificado no nosso BD: ${morador.nome} (Apto ${morador.apartamento})`);
+          
+          // 🆕 LOG: Morador identificado via transação
+          await logService.logIdentificacao(
+            true,
+            chargerUuid,
+            chargerName,
+            ocppIdTag,
+            morador.id!,
+            morador.nome,
+            `Morador ${morador.nome} identificado via transação ${transactionId}`
+          );
         } else {
           console.warn(`⚠️  [Polling] Tag RFID "${ocppIdTag}" não cadastrada no nosso sistema`);
           console.log(`   💡 Sugestão: Cadastrar morador com tag_rfid = "${ocppIdTag}"`);
@@ -240,6 +342,17 @@ export class PollingService {
           if (transacao.userAddressComplement) {
             console.log(`   🏠 Apartamento no CVE: ${transacao.userAddressComplement}`);
           }
+          
+          // 🆕 LOG: Tag não identificada
+          await logService.logIdentificacao(
+            false,
+            chargerUuid,
+            chargerName,
+            ocppIdTag,
+            undefined,
+            undefined,
+            `Tag RFID "${ocppIdTag}" não cadastrada. CVE User: ${transacao.userName || 'N/A'}`
+          );
         }
       } else if (transacao.ocppTagPk) {
         // FALLBACK: Buscar morador pelo ocppTagPk na tabela de mapeamento manual
@@ -258,12 +371,34 @@ export class PollingService {
             morador = result.rows[0];
             moradorId = morador.id;
             console.log(`✅ [Polling] Morador identificado via ocppTagPk: ${morador.nome} (Apto ${morador.apartamento})`);
+            
+            // 🆕 LOG: Morador identificado via ocppTagPk
+            await logService.logIdentificacao(
+              true,
+              chargerUuid,
+              chargerName,
+              `TagPK:${transacao.ocppTagPk}`,
+              morador.id,
+              morador.nome,
+              `Morador ${morador.nome} identificado via ocppTagPk ${transacao.ocppTagPk}`
+            );
           } else {
             console.warn(`⚠️  [Polling] ocppTagPk ${transacao.ocppTagPk} não mapeado`);
             console.log(`   💡 Sugestão: Adicionar mapeamento manual na tabela tag_pk_mapping`);
             if (transacao.userName) {
               console.log(`   📝 Nome no CVE: ${transacao.userName}`);
             }
+            
+            // 🆕 LOG: ocppTagPk não mapeado
+            await logService.logIdentificacao(
+              false,
+              chargerUuid,
+              chargerName,
+              `TagPK:${transacao.ocppTagPk}`,
+              undefined,
+              undefined,
+              `ocppTagPk ${transacao.ocppTagPk} não mapeado. CVE User: ${transacao.userName || 'N/A'}`
+            );
           }
         } catch (error) {
           console.error(`❌ [Polling] Erro ao buscar mapeamento:`, error);

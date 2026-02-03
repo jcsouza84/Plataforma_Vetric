@@ -6,6 +6,7 @@ import axios, { AxiosInstance } from 'axios';
 import { config } from '../config/env';
 import { query } from '../config/database';
 import { MoradorModel } from '../models/Morador';
+import { logService } from './LogService';
 
 interface TemplateNotificacao {
   id: number;
@@ -203,6 +204,18 @@ export class NotificationService {
       }
 
       console.log(`✅ Notificação "${tipo}" enviada para ${morador.nome} (${morador.telefone})`);
+      
+      // 🆕 LOG: Notificação enviada com sucesso
+      await logService.logNotificacao(
+        true,
+        tipo.toUpperCase(),
+        moradorId,
+        morador.nome,
+        dados.charger,
+        `Notificação de ${tipo} enviada para ${morador.nome}`,
+        undefined
+      );
+      
       return true;
 
     } catch (error: any) {
@@ -218,6 +231,17 @@ export class NotificationService {
             '',
             morador.telefone,
             'falha',
+            error.message
+          );
+          
+          // 🆕 LOG: Falha ao enviar notificação
+          await logService.logNotificacao(
+            false,
+            tipo.toUpperCase(),
+            morador.id,
+            morador.nome,
+            undefined,
+            `Falha ao enviar notificação de ${tipo}`,
             error.message
           );
         }
