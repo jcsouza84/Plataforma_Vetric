@@ -399,7 +399,9 @@ export class PollingService {
           }
 
           // Obter potência atual (power_w)
-          const currentPower = connector.power || connector.lastStatus?.power || 0;
+          // NOTA: CVE API não retorna power no connector, apenas nos MeterValues durante transação
+          // TODO: Implementar busca de power via MeterValues ou transação ativa
+          const currentPower = 0; // Temporariamente desabilitado até implementar busca correta
           const status = connector.lastStatus?.status || 'Unknown';
 
           // Buscar templates ativos
@@ -426,7 +428,7 @@ export class PollingService {
                 try {
                   // Calcular energia consumida até agora
                   const transacoes = await cveService.getActiveTransactions();
-                  const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                  const transacao = transacoes.find(t => t.chargeBoxUuid === carregamento.charger_uuid);
                   const energia = transacao?.energyHumanReadable || '0.0 kWh';
 
                   // Enviar notificação IMEDIATAMENTE (tempo = 0)
@@ -482,7 +484,7 @@ export class PollingService {
                   try {
                     // Calcular energia e duração totais
                     const transacoes = await cveService.getActiveTransactions();
-                    const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                    const transacao = transacoes.find(t => t.chargeBoxUuid === carregamento.charger_uuid);
                     const energia = transacao?.energyHumanReadable || '0.0 kWh';
 
                     // Enviar notificação
@@ -524,7 +526,7 @@ export class PollingService {
                 try {
                   // Calcular energia parcial e duração
                   const transacoes = await cveService.getActiveTransactions();
-                  const transacao = transacoes.find(t => t.chargerUuid === carregamento.charger_uuid);
+                  const transacao = transacoes.find(t => t.chargeBoxUuid === carregamento.charger_uuid);
                   const energia = transacao?.energyHumanReadable || '0.0 kWh';
 
                   // Enviar notificação IMEDIATAMENTE
